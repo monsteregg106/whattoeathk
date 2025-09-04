@@ -1799,13 +1799,13 @@ class FortuneWheel {
         ctx.roundRect(0, 0, canvas.width, canvas.height, 20);
         ctx.fill();
         
-        // Add shadow effect
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
-        ctx.shadowBlur = 20;
+        // No shadow for clean flat card on mobile
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
         ctx.shadowOffsetX = 0;
-        ctx.shadowOffsetY = 10;
+        ctx.shadowOffsetY = 0;
         
-        // Draw main content background
+        // Draw main content background (flat)
         ctx.fillStyle = '#ffffff';
         ctx.beginPath();
         ctx.roundRect(10, 10, canvas.width - 20, canvas.height - 20, 20);
@@ -1916,14 +1916,19 @@ class FortuneWheel {
         const contentX = 10;
         const contentY = 10;
         const contentW = 332;
-        const catBaseW = 200, catBaseH = 240;
-        const cuisineBaseW = 180, cuisineBaseH = 180;
+        const catIntrinsicW = catImage ? catImage.naturalWidth || 200 : 200;
+        const catIntrinsicH = catImage ? catImage.naturalHeight || 240 : 240;
+        const cuisineIntrinsicW = cuisineImage ? cuisineImage.naturalWidth || 180 : 180;
+        const cuisineIntrinsicH = cuisineImage ? cuisineImage.naturalHeight || 180 : 180;
         const imageSpacing = 0;
-        const scale = Math.min(1, (contentW) / (catBaseW + imageSpacing + cuisineBaseW));
-        const catW = Math.round(catBaseW * scale);
-        const catH = Math.round(catBaseH * scale);
-        const cuisineW = Math.round(cuisineBaseW * scale);
-        const cuisineH = Math.round(cuisineBaseH * scale);
+        const scale = Math.min(1, (contentW) / ((catIntrinsicW * (240/catIntrinsicH)) + imageSpacing + (cuisineIntrinsicW * (180/cuisineIntrinsicH))));
+        // Preserve aspect ratios while targeting visual heights (cat≈240, cuisine≈180)
+        const targetCatH = Math.round(240 * scale);
+        const targetCatW = Math.round(targetCatH * (catIntrinsicW / catIntrinsicH));
+        const targetCuisineH = Math.round(180 * scale);
+        const targetCuisineW = Math.round(targetCuisineH * (cuisineIntrinsicW / cuisineIntrinsicH));
+        const catW = targetCatW, catH = targetCatH;
+        const cuisineW = targetCuisineW, cuisineH = targetCuisineH;
         const totalW = catW + imageSpacing + cuisineW;
         const imagesX = contentX + Math.round((contentW - totalW) / 2);
         const maxH = Math.max(catH, cuisineH);

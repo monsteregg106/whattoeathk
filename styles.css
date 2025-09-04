@@ -1011,11 +1011,13 @@ html, body {
     }
     
     .action-buttons {
+        display: flex;
         flex-direction: column;
         align-items: center;
         position: static; /* ensure under wheel */
-        margin-top: 16px;
+        margin: 16px auto 0;
         width: 100%;
+        max-width: 520px; /* keep centered under wheel */
     }
     
     .action-btn {
