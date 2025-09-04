@@ -1156,7 +1156,9 @@ class FortuneWheel {
                 imageElement.setAttribute('y', String(y));
                 imageElement.setAttribute('width', String(w));
                 imageElement.setAttribute('height', String(h));
+                // Set both modern and legacy href attributes for Safari compatibility
                 imageElement.setAttribute('href', dataURL);
+                imageElement.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', dataURL);
                 svg.appendChild(imageElement);
                 
                 callback();
@@ -1496,13 +1498,15 @@ class FortuneWheel {
                     imageElement.setAttribute('y', String(y));
                     imageElement.setAttribute('width', String(w));
                     imageElement.setAttribute('height', String(h));
+                    // Set both modern and legacy href attributes for Safari compatibility
                     imageElement.setAttribute('href', dataURL);
+                    imageElement.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', dataURL);
                     svg.appendChild(imageElement);
                     
                     callback();
                 } else {
                     console.log('⚠️ Failed to convert cuisine image to base64, using emoji');
-                    this.addCuisineEmoji(svg, cuisineEmoji, callback);
+                    this.addCuisineEmoji(svg, cuisineEmoji, x, y, w, h, callback);
                 }
             });
         } else {
@@ -2613,8 +2617,9 @@ class FortuneWheel {
                 this.handleImageCapture(canvas, action);
             };
             
-            // Try to load the Cat Love image
-            catImage.src = 'Cat love.png';
+            // Try to load the Cat Love image (prefer the selected per-spin image)
+            const preferredCat = this.currentCatLoveDataUrl || null;
+            catImage.src = preferredCat || 'Cat love.png';
         } else {
             console.log('✅ Manual canvas created successfully');
             this.handleImageCapture(canvas, action);
