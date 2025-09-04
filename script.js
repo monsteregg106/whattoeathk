@@ -1010,6 +1010,9 @@ class FortuneWheel {
         
         // Create SVG
         const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        // Ensure Safari recognizes xlink namespace for image hrefs
+        svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+        svg.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
         svg.setAttribute('width', '352');
         svg.setAttribute('height', '465');
         svg.setAttribute('viewBox', '0 0 352 465');
@@ -1585,17 +1588,42 @@ class FortuneWheel {
         }
     }
     
-    // Add cuisine emoji as fallback
+    // Add cuisine emoji as raster image (more reliable in Safari than SVG text)
     addCuisineEmoji(svg, cuisineEmoji, x, y, w, h, callback) {
-        const cuisineEmojiText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        cuisineEmojiText.setAttribute('x', String(x + Math.floor(w/2)));
-        cuisineEmojiText.setAttribute('y', String(y + Math.floor(h*0.75)));
-        cuisineEmojiText.setAttribute('text-anchor', 'middle');
-        cuisineEmojiText.setAttribute('font-size', String(Math.min(w, h)));
-        cuisineEmojiText.setAttribute('fill', '#333333');
-        cuisineEmojiText.textContent = cuisineEmoji;
-        svg.appendChild(cuisineEmojiText);
-        callback();
+        try {
+            const size = Math.min(w, h);
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            // Clear and draw emoji centered
+            ctx.clearRect(0, 0, size, size);
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.font = `${Math.floor(size)}px Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, Emoji, Arial`;
+            ctx.fillText(cuisineEmoji, size / 2, size / 2);
+            const dataURL = canvas.toDataURL('image/png');
+            const imageElement = document.createElementNS('http://www.w3.org/2000/svg', 'image');
+            imageElement.setAttribute('x', String(x));
+            imageElement.setAttribute('y', String(y));
+            imageElement.setAttribute('width', String(w));
+            imageElement.setAttribute('height', String(h));
+            imageElement.setAttribute('href', dataURL);
+            imageElement.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', dataURL);
+            svg.appendChild(imageElement);
+            callback();
+        } catch (e) {
+            // Fallback to simple text if canvas fails
+            const cuisineEmojiText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            cuisineEmojiText.setAttribute('x', String(x + Math.floor(w/2)));
+            cuisineEmojiText.setAttribute('y', String(y + Math.floor(h*0.75)));
+            cuisineEmojiText.setAttribute('text-anchor', 'middle');
+            cuisineEmojiText.setAttribute('font-size', String(Math.min(w, h)));
+            cuisineEmojiText.setAttribute('fill', '#333333');
+            cuisineEmojiText.textContent = cuisineEmoji;
+            svg.appendChild(cuisineEmojiText);
+            callback();
+        }
     }
     
     // Add Cat Love emoji as fallback

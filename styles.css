@@ -961,7 +961,7 @@ html, body {
         /* Bring cat closer to wheel and overlap slightly */
         .character-container {
             position: absolute;
-            left: 10px; /* move towards left bottom of the wheel */
+            left: 5px; /* 5px more to the left */
             bottom: 10px;
             top: auto;
             right: auto;
@@ -969,8 +969,8 @@ html, body {
             z-index: 6; /* over wheel button but under pointer */
         }
         .character-image {
-            width: 120px;
-            height: 144px;
+            width: 168px; /* +40% from 120 */
+            height: 201.6px; /* maintain aspect */
         }
     }
 
