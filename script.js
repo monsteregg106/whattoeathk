@@ -956,8 +956,16 @@ class FortuneWheel {
     capturePopupAsImage(sharePopup, action) {
         console.log(`🖼️ Capturing popup as image for ${action}...`);
         
-        // NEW APPROACH: SVG Generation
-        this.createSVGImage(action);
+        // Prefer SVG on desktop; force robust canvas on mobile (iOS/Android)
+        const ua = navigator.userAgent || '';
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(ua);
+        if (isMobile) {
+            console.log('📱 Mobile detected: using canvas export path');
+            this.createCanvasWithRealImages(action);
+        } else {
+            // NEW APPROACH: SVG Generation
+            this.createSVGImage(action);
+        }
     }
     
     // NEW APPROACH: SVG Generation

@@ -1013,6 +1013,9 @@ html, body {
     .action-buttons {
         flex-direction: column;
         align-items: center;
+        position: static; /* ensure under wheel */
+        margin-top: 16px;
+        width: 100%;
     }
     
     .action-btn {
@@ -1034,6 +1037,24 @@ html, body {
     .popup-btn {
         padding: 14px 20px;
         font-size: 14px;
+    }
+}
+
+/* Final overrides: portrait phone tweaks placed at end to win cascade */
+@media (max-width: 768px) and (orientation: portrait) {
+    .character-container {
+        left: 5px;
+        bottom: 10px;
+        top: auto;
+        right: auto;
+        transform: none;
+        z-index: 6;
+    }
+    .character-image {
+        width: 180px !important;  /* +50% from base 120 */
+        height: 216px !important; /* maintain aspect */
+        object-fit: contain;
+        display: block;
     }
 }
 
