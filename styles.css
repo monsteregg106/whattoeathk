@@ -177,9 +177,6 @@ html, body {
 .main-content {
     flex: 1;
     padding: 40px 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 /* Fortune Section */
@@ -969,8 +966,8 @@ html, body {
             z-index: 6; /* over wheel button but under pointer */
         }
         .character-image {
-            width: 168px; /* +40% from 120 */
-            height: 201.6px; /* maintain aspect */
+            width: 180px; /* +50% from 120 */
+            height: 216px; /* maintain aspect */
         }
     }
 
@@ -1014,22 +1011,13 @@ html, body {
     }
     
     .action-buttons {
-        position: fixed;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
-        background: rgba(255, 255, 255, 0.92);
-        backdrop-filter: blur(10px);
-        border-top: 1px solid rgba(226, 232, 240, 0.8);
-        z-index: 1000;
-        justify-content: space-between;
-        gap: 12px;
+        flex-direction: column;
+        align-items: center;
     }
     
     .action-btn {
-        flex: 1;
-        min-width: 0;
+        width: 100%;
+        max-width: 280px;
         padding: 14px 24px;
         font-size: 14px;
     }
