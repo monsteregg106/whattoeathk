@@ -95,6 +95,7 @@ html, body {
 /* App Container Styles */
 .app-container {
     min-height: 100vh;
+    min-height: 100dvh; /* better viewport height on mobile Safari/Chrome */
     display: flex;
     flex-direction: column;
     max-width: 1200px;
@@ -176,6 +177,9 @@ html, body {
 .main-content {
     flex: 1;
     padding: 40px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* Fortune Section */
@@ -939,6 +943,23 @@ html, body {
 }
 
 @media (max-width: 768px) {
+    /* Optimize for portrait 9:16 phones */
+    @media (orientation: portrait) {
+        .app-container {
+            min-height: 100vh;
+            min-height: 100dvh;
+        }
+        .main-content {
+            padding: 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .fortune-section {
+            margin-bottom: 10px;
+        }
+    }
+
     .app-container {
         padding: 0 15px;
     }
