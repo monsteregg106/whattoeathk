@@ -1840,7 +1840,7 @@ class FortuneWheel {
         const catImage = new Image();
         const cuisineImage = new Image();
         
-        // Load Cat Love.png
+        // Load Cat Love image (prefer per-spin data URL)
         catImage.onload = () => {
             console.log('✅ Cat Love.png loaded successfully');
             imagesLoaded++;
@@ -1899,77 +1899,111 @@ class FortuneWheel {
             }
         }
         
-        // Start loading Cat Love.png
-        catImage.src = 'Cat love.png';
+        // Start loading Cat Love (prefer selected data URL)
+        try {
+            const preferredCat = this.currentCatLoveDataUrl || null;
+            catImage.src = preferredCat || 'Cat love.png';
+        } catch (_) {
+            catImage.src = 'Cat love.png';
+        }
     }
     
     // Draw the complete canvas with all elements
     drawCompleteCanvas(ctx, canvas, catImage, cuisineImage, cuisineName, cuisineDescription, popularOptions, action) {
         console.log('🎨 Drawing complete canvas...');
         
-        // Draw images section
-        const imageY = 80;
-        const imageSize = 80;
-        const spacing = 20;
-        
+        // Match desktop alignment for images and text
+        const contentX = 10;
+        const contentY = 10;
+        const contentW = 332;
+        const catBaseW = 200, catBaseH = 240;
+        const cuisineBaseW = 180, cuisineBaseH = 180;
+        const imageSpacing = 0;
+        const scale = Math.min(1, (contentW) / (catBaseW + imageSpacing + cuisineBaseW));
+        const catW = Math.round(catBaseW * scale);
+        const catH = Math.round(catBaseH * scale);
+        const cuisineW = Math.round(cuisineBaseW * scale);
+        const cuisineH = Math.round(cuisineBaseH * scale);
+        const totalW = catW + imageSpacing + cuisineW;
+        const imagesX = contentX + Math.round((contentW - totalW) / 2);
+        const maxH = Math.max(catH, cuisineH);
+        const centerY = 150; // place under title similar to desktop
+        const afterImagesY = centerY + Math.round(maxH / 2);
+
         // Draw Cat Love image or emoji
         if (catImage) {
             try {
-                ctx.drawImage(catImage, 50, imageY, imageSize, imageSize);
+                ctx.drawImage(catImage, imagesX, centerY - Math.round(catH / 2), catW, catH);
                 console.log('✅ Drew Cat Love image');
             } catch (e) {
                 console.log('⚠️ Failed to draw Cat Love image, using emoji');
-                ctx.font = '80px Arial';
-                ctx.fillText('🐱', 90, imageY + 60);
+                ctx.font = `${Math.min(catW, catH)}px Arial`;
+                ctx.fillText('🐱', imagesX + Math.floor(catW/2), centerY);
             }
         } else {
-            ctx.font = '80px Arial';
-            ctx.fillText('🐱', 90, imageY + 60);
+            ctx.font = `${Math.min(catW, catH)}px Arial`;
+            ctx.fillText('🐱', imagesX + Math.floor(catW/2), centerY);
         }
-        
+
         // Draw cuisine image or emoji
         if (cuisineImage) {
             try {
-                ctx.drawImage(cuisineImage, 50 + imageSize + spacing, imageY, imageSize, imageSize);
+                ctx.drawImage(cuisineImage, imagesX + catW + imageSpacing, centerY - Math.round(cuisineH / 2), cuisineW, cuisineH);
                 console.log('✅ Drew cuisine image');
             } catch (e) {
                 console.log('⚠️ Failed to draw cuisine image, using emoji');
-                ctx.font = '80px Arial';
-                ctx.fillText('🍽️', 50 + imageSize + spacing + 40, imageY + 60);
+                ctx.font = `${Math.min(cuisineW, cuisineH)}px Arial`;
+                ctx.fillText('🍽️', imagesX + catW + Math.floor(cuisineW/2), centerY);
             }
         } else {
-            // Draw cuisine emoji
+            // Draw cuisine emoji from result icon
             const resultIconElement = document.getElementById('resultIcon');
             if (resultIconElement) {
-                const emoji = resultIconElement.textContent.trim();
-                ctx.font = '80px Arial';
-                ctx.fillText(emoji, 50 + imageSize + spacing + 40, imageY + 60);
+                const emoji = resultIconElement.textContent.trim() || '🍽️';
+                ctx.font = `${Math.min(cuisineW, cuisineH)}px Arial`;
+                ctx.fillText(emoji, imagesX + catW + Math.floor(cuisineW/2), centerY);
                 console.log('✅ Drew cuisine emoji:', emoji);
             }
         }
-        
-        // Draw cuisine name
+
+        // Draw cuisine name (match desktop spacing)
         ctx.font = 'bold 24px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif';
         ctx.fillStyle = '#333333';
-        ctx.fillText(cuisineName, canvas.width / 2, imageY + imageSize + 50);
+        ctx.fillText(cuisineName, canvas.width / 2, afterImagesY + 40);
         
-        // Draw description
+        // Draw description (wrapped)
         ctx.font = '16px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif';
         ctx.fillStyle = '#666666';
-        ctx.fillText(cuisineDescription, canvas.width / 2, imageY + imageSize + 80);
+        const descMaxWidth = contentW - 40; // side margins
+        const descStartY = afterImagesY + 70;
+        const descLineHeight = 20;
+        const words = String(cuisineDescription || '').split(/\s+/).filter(Boolean);
+        let line = '';
+        let y = descStartY;
+        const measure = (t) => ctx.measureText(t).width || 0;
+        for (let i = 0; i < words.length; i++) {
+            const test = line ? line + ' ' + words[i] : words[i];
+            if (measure(test) <= descMaxWidth) {
+                line = test;
+            } else {
+                if (line) { ctx.fillText(line, canvas.width / 2, y); y += descLineHeight; }
+                line = words[i];
+            }
+        }
+        if (line) ctx.fillText(line, canvas.width / 2, y);
         
-        // Draw popular options
+        // Draw popular options (match desktop spacing)
         if (popularOptions.length > 0) {
             ctx.font = 'bold 18px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif';
             ctx.fillStyle = '#333333';
-            ctx.fillText('Popular Options:', canvas.width / 2, imageY + imageSize + 120);
+            const optionsTitleY = y + 30;
+            ctx.fillText('Popular Options:', canvas.width / 2, optionsTitleY);
             
             ctx.font = '14px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif';
             ctx.fillStyle = '#666666';
-            
             popularOptions.forEach((option, index) => {
-                const y = imageY + imageSize + 150 + (index * 25);
-                ctx.fillText(`• ${option}`, canvas.width / 2, y);
+                const oy = optionsTitleY + 24 + (index * 22);
+                ctx.fillText(`• ${option}`, canvas.width / 2, oy);
             });
         }
         
