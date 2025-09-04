@@ -1062,6 +1062,9 @@ html, body {
 
 /* Strong specificity to ensure mobile action buttons sit under the wheel */
 @media (max-width: 768px) {
+    body .app-container .main-content {
+        display: block !important; /* stack children so buttons sit under the wheel */
+    }
     body .app-container .main-content .action-buttons {
         display: flex !important;
         flex-direction: column !important;
