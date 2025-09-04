@@ -713,23 +713,23 @@ html, body {
     .result-cuisine-display {
         gap: 0;
         margin-bottom: 20px;
-        flex-direction: column;
-        row-gap: 8px;
+        flex-direction: row; /* side-by-side on mobile */
+        column-gap: 8px;
     }
     
     .chef-cat-image {
-        width: 150px;
-        height: 180px;
+        width: 140px;
+        height: 168px;
     }
     
     .cuisine-icon {
-        font-size: 180px;
-        width: 150px;
-        height: 180px;
+        font-size: 160px;
+        width: 140px;
+        height: 168px;
     }
     .cuisine-icon img {
-        width: 150px;
-        height: 180px;
+        width: 140px;
+        height: 168px;
         object-fit: contain;
         display: block;
     }
@@ -958,6 +958,18 @@ html, body {
         .fortune-section {
             margin-bottom: 10px;
         }
+        /* Bring cat closer to wheel and overlap slightly */
+        .character-container {
+            position: absolute;
+            right: 0;
+            top: 55%;
+            transform: translateY(-50%);
+            z-index: 6; /* over wheel button but under pointer */
+        }
+        .character-image {
+            width: 120px;
+            height: 144px;
+        }
     }
 
     .app-container {
@@ -1000,13 +1012,22 @@ html, body {
     }
     
     .action-buttons {
-        flex-direction: column;
-        align-items: center;
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+        background: rgba(255, 255, 255, 0.92);
+        backdrop-filter: blur(10px);
+        border-top: 1px solid rgba(226, 232, 240, 0.8);
+        z-index: 1000;
+        justify-content: space-between;
+        gap: 12px;
     }
     
     .action-btn {
-        width: 100%;
-        max-width: 280px;
+        flex: 1;
+        min-width: 0;
         padding: 14px 24px;
         font-size: 14px;
     }

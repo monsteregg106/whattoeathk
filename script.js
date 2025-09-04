@@ -1975,8 +1975,8 @@ class FortuneWheel {
                         images.forEach((img, index) => {
                             console.log(`🖼️ Original Image ${index}:`, img.src, 'alt:', img.alt);
                             
-                            // Replace ANY local file image
-                            if (img.src && (img.src.startsWith('file://') || img.src.includes('Cat love') || img.src.includes('Cat Love'))) {
+                            // Replace ONLY file:// images to avoid CORS tainting
+                            if (img.src && img.src.startsWith('file://')) {
                                 console.log('🔄 Replacing local image in original popup:', img.src);
                                 
                                 // Create emoji replacement
@@ -2162,8 +2162,8 @@ class FortuneWheel {
                         images.forEach((img, index) => {
                             console.log(`🖼️ Image ${index}:`, img.src, 'alt:', img.alt);
                             
-                            // Replace ANY local file image
-                            if (img.src && (img.src.startsWith('file://') || img.src.includes('Cat love') || img.src.includes('Cat Love'))) {
+                            // Replace ONLY file:// images to avoid CORS tainting
+                            if (img.src && img.src.startsWith('file://')) {
                                 console.log('🔄 Replacing local image:', img.src);
                                 
                                 // Create emoji replacement
@@ -2276,8 +2276,8 @@ class FortuneWheel {
                             images.forEach((img, index) => {
                                 console.log(`🖼️ Content Image ${index}:`, img.src, 'alt:', img.alt);
                                 
-                                // Replace ANY local file image
-                                if (img.src && (img.src.startsWith('file://') || img.src.includes('Cat love') || img.src.includes('Cat Love'))) {
+                                // Replace ONLY file:// images to avoid CORS tainting
+                                if (img.src && img.src.startsWith('file://')) {
                                     console.log('🔄 Replacing local image in content:', img.src);
                                     
                                     // Create emoji replacement
