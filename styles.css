@@ -1048,7 +1048,7 @@ html, body {
 /* Final overrides: portrait phone tweaks placed at end to win cascade */
 @media (max-width: 768px) and (orientation: portrait) {
     .character-container {
-        left: 5px;
+        left: -35px; /* ensure final override matches requested shift */
         bottom: 10px;
         top: auto;
         right: auto;
