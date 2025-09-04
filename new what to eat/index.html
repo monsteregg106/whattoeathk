@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>為食貓們！今晚食咩好？｜美食輪盤｜香港餐廳推薦</title>
+    <meta name="description" content="揀餐廳好煩？為食貓幫你轉轉盤！隨機抽菜系、即時推薦附近餐廳，今晚食乜好唔再煩。適合拍拖、聚會同打工仔。">
+    <link rel="canonical" href="https://whattoeathk.com/">
+    <link rel="alternate" href="https://whattoeathk.com/" hreflang="zh-HK">
+    <link rel="alternate" href="https://whattoeathk.com/en" hreflang="en">
+    <meta http-equiv="content-language" content="zh-HK">
+
+    <meta property="og:locale" content="zh_HK">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="為食貓們！今晚食咩好？｜美食輪盤｜香港餐廳推薦">
+    <meta property="og:description" content="選擇困難症救星！隨機抽餐廳＋附近美食推薦，為食貓幫你話事。">
+    <meta property="og:url" content="https://whattoeathk.com/">
+    <meta property="og:site_name" content="為食貓們！今晚食咩好？">
+    <meta property="og:image" content="https://whattoeathk.com/og/og-card.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="為食貓們！今晚食咩好？">
+    <meta name="twitter:description" content="美食輪盤幫你揀！即刻試下～">
+    <meta name="twitter:image" content="https://whattoeathk.com/og/og-card.jpg">
+
+    <link rel="icon" href="/icons/favicon.ico">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- GA4 (replace G-XXXXXXXXXX with your Measurement ID). Skip on file:// -->
+    <script>
+      (function(){
+        var isFile = location.protocol === 'file:';
+        if (isFile) return; // don't load GA on file://
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX';
+        document.head.appendChild(s);
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);} window.gtag = gtag;
+        gtag('consent', 'default', { ad_storage:'denied', analytics_storage:'granted', wait_for_update: 500 });
+        gtag('js', new Date());
+        gtag('config', 'G-XXXXXXXXXX', { send_page_view: true });
+      })();
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context":"https://schema.org",
+      "@type":"WebApplication",
+      "name":"為食貓們！今晚食咩好？",
+      "alternateName":"Foodie Cat - What to Eat Tonight?",
+      "applicationCategory":"LifestyleApplication",
+      "operatingSystem":"Web",
+      "url":"https://whattoeathk.com/",
+      "inLanguage":"zh-HK",
+      "description":"美食輪盤幫你解決選擇困難症，隨機抽菜系並推薦附近餐廳。",
+      "image":"https://whattoeathk.com/og/og-card.jpg",
+      "offers":{"@type":"Offer","price":"0","priceCurrency":"HKD"}
+    }
+    </script>
+</head>
+<body>
+    <!-- Loading Overlay to prevent flash -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p>Loading your personalized experience...</p>
+            <button id="manualLoadBtn" class="manual-load-btn" style="display: none;">
+                Click here if loading takes too long
+            </button>
+        </div>
+    </div>
+
+    <div class="app-container" style="opacity: 0;">
+        <!-- Header -->
+        <header class="header">
+            <div class="language-toggle">
+                <button id="langToggle" class="lang-btn">中文</button>
+            </div>
+            <div class="header-content">
+                <h1 class="app-title">🍽️ What to Eat Tonight?</h1>
+                <p class="app-subtitle">Let the magic decide your next delicious meal</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="fortune-section">
+                <!-- Fortune Wheel -->
+                <div class="wheel-container">
+                    <div class="wheel-wrapper">
+                        <canvas id="wheelCanvas" width="350" height="350"></canvas>
+                        <div class="wheel-pointer"></div>
+                        <button id="spinButton" class="spin-button">
+                            <span class="spin-text">PRESS TO SPIN</span>
+                        </button>
+                    </div>
+                    <!-- Brand Character positioned relative to wheel -->
+                    <div class="character-container">
+                        <div class="character-wrapper">
+                            <img src="Cat.png" alt="Fortune Teller Cat" class="character-image">
+                            <!-- Magic Stars Effect -->
+                            <div class="magic-stars">
+                                <div class="star star-1">✨</div>
+                                <div class="star star-2">⭐</div>
+                                <div class="star star-3">🌟</div>
+                                <div class="star star-4">✨</div>
+                                <div class="star star-5">⭐</div>
+                                <div class="star star-6">🌟</div>
+                                <div class="star star-7">✨</div>
+                                <div class="star star-8">⭐</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button id="feelingLucky" class="action-btn secondary">
+                    🎲 I'm Feeling Lucky
+                </button>
+                <button id="resetWheel" class="action-btn tertiary">
+                    🔄 Reset Wheel
+                </button>
+            </div>
+        </main>
+
+        <!-- Result Popup -->
+        <div id="resultPopup" class="popup-overlay">
+            <div class="popup-content">
+                <div class="popup-header">
+                    <h2>Your Culinary Destiny Awaits!</h2>
+                </div>
+                <div class="popup-body">
+                    <div class="result-cuisine">
+                        <div class="result-cuisine-display">
+                            <div class="chef-cat-character">
+                                <img src="Cat love.png" alt="Chef Cat Love" class="chef-cat-image">
+                            </div>
+                            <div id="resultIcon" class="cuisine-icon" style="font-size: 180px !important; width: 180px !important; height: 180px !important; min-width: 180px !important; min-height: 180px !important; max-width: 180px !important; max-height: 180px !important; display: flex !important; align-items: center !important; justify-content: center !important;">🍕</div>
+                        </div>
+                        <h3 id="resultCuisine">Italian</h3>
+                        <p id="resultDescription">Time for some delicious pasta, pizza, or risotto!</p>
+                    </div>
+                    <div class="result-suggestions">
+                        <h4>Popular Options:</h4>
+                        <div id="suggestionsList" class="suggestions-list">
+                            <!-- Dynamic suggestions will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+                <div class="popup-actions">
+                    <button id="findRestaurants" class="popup-btn primary">
+                        📍 Find Restaurants
+                    </button>
+                    <button id="shareResult" class="popup-btn share">
+                        📱 Share Result
+                    </button>
+                    <button id="spinAgain" class="popup-btn secondary">
+                        🎯 Spin Again
+                    </button>
+                    <button id="closePopup" class="popup-btn tertiary">
+                        ✖️ Close
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 Fortune Food Finder. Let magic guide your meals! 🌟</p>
+        </footer>
+
+        <!-- SEO supportive content (visually hidden) -->
+        <div class="seo-content" style="position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden;">
+            <section>
+                <h1 style="font-size: 1.25rem; margin: 0 0 8px;">為食貓們！今晚食咩好？</h1>
+                <p>呢個美食輪盤 Web App 專為香港用戶設計，幫你解決「今晚食乜好」同選擇困難症，隨機抽出菜系，並可分享結果卡。</p>
+
+                <h2 style="font-size: 1.1rem; margin: 16px 0 8px;">點樣用美食輪盤（30 秒上手）</h2>
+                <ul>
+                    <li>按「轉轉盤」即時抽菜系（日本菜、韓國菜、泰國菜、燒肉、火鍋等）。</li>
+                    <li>可分享/下載結果卡，方便同朋友傾餐廳。</li>
+                </ul>
+
+                <h2 style="font-size: 1.1rem; margin: 16px 0 8px;">熱門菜系</h2>
+                <p>日本菜、韓國菜、泰國菜、燒肉、火鍋、素食、咖喱、麵飯小店等。</p>
+
+                <h2 style="font-size: 1.1rem; margin: 16px 0 8px;">附近餐廳推薦（地點／價位／場合）</h2>
+                <p>可按地區（中環、尖沙咀、旺角、將軍澳等）同場合（拍拖、朋友聚會、午餐）揀選靈感。</p>
+
+                <h2 style="font-size: 1.1rem; margin: 16px 0 8px;">常見問題</h2>
+                <ul>
+                    <li>會唔會重覆？輪盤會隨機抽出結果，建議再轉一次試多幾款。</li>
+                    <li>可唔可以分享？可以，支援分享同下載 JPG 結果卡。</li>
+                </ul>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="script.js"></script>
+    <script src="simple-admin/config-loader.js"></script>
+</body>
+</html>

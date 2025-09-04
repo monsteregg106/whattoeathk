@@ -1,0 +1,2067 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bilingual Admin Panel - Fortune Wheel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        /* Language Tabs */
+        .language-tabs {
+            display: flex;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 15px 25px;
+            background: #f8f9fa;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-button.active {
+            background: white;
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-button:hover {
+            background: #e9ecef;
+        }
+
+        .tab-button.active:hover {
+            background: white;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .help-text {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 5px;
+            background: #f8f9fa;
+            padding: 8px;
+            border-radius: 4px;
+            border-left: 3px solid #17a2b8;
+        }
+
+        .char-counter {
+            font-size: 11px;
+            color: #6c757d;
+            text-align: right;
+            margin-top: 3px;
+        }
+
+        .char-counter.warning {
+            color: #fd7e14;
+        }
+
+        .char-counter.error {
+            color: #dc3545;
+        }
+
+        .color-input {
+            width: 60px;
+            height: 40px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .segment-item {
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #f8f9fa;
+        }
+
+        .segment-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 0.8fr 2fr;
+            gap: 20px;
+            align-items: start;
+        }
+        
+        @media (min-width: 1024px) {
+            .segment-grid {
+                grid-template-columns: 2.5fr 1.2fr 1fr 2.5fr;
+                gap: 25px;
+            }
+            
+            .section {
+                padding: 30px;
+            }
+            
+            .main-sections {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 25px;
+            }
+            
+            .wheel-section {
+                grid-column: 1 / -1;
+            }
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+
+        .success-message, .error-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            display: none;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .preview-link {
+            display: inline-block;
+            margin-top: 15px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .preview-link:hover {
+            text-decoration: underline;
+        }
+
+        .image-preview {
+            max-width: 150px;
+            max-height: 150px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        @media (max-width: 1023px) {
+            .main-sections {
+                display: block !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .segment-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .section {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+            
+            .tab-button {
+                padding: 12px 15px;
+                font-size: 14px;
+            }
+        }
+
+        /* Bilingual Layout */
+        .bilingual-content {
+            display: block;
+        }
+        
+        .bilingual-form-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .lang-input-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .lang-input-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #555;
+            font-size: 14px;
+        }
+        
+        .lang-input-group input,
+        .lang-input-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        .lang-input-group input:focus,
+        .lang-input-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .lang-input-group .char-counter {
+            font-size: 11px;
+            color: #6c757d;
+            text-align: right;
+            margin-top: 3px;
+        }
+        
+        @media (max-width: 768px) {
+            .bilingual-form-group {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+        }
+        
+        /* Bilingual Segment Layout */
+        .bilingual-segment-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .shared-image-section,
+        .shared-color-section {
+            margin-bottom: 15px;
+        }
+        
+        .popular-options-section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .popular-options-section label {
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .popular-options-section input[type="checkbox"] {
+            margin-right: 8px;
+            width: 18px;
+            height: 18px;
+        }
+        
+        .popular-fields {
+            margin-top: 15px;
+        }
+        
+        .segment-actions {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        /* Segment Grid Layout */
+        .segment-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            margin-bottom: 20px;
+        }
+        
+        .segment-item {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .segment-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        /* Improved Bilingual Segment Layout */
+        .bilingual-segment-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+            align-items: start;
+        }
+        
+        .shared-image-section,
+        .shared-color-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #fff;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .shared-image-section label,
+        .shared-color-section label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #495057;
+            font-size: 14px;
+        }
+        
+        .shared-image-section input[type="text"] {
+            text-align: center;
+            font-size: 24px;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        
+        .shared-color-section input[type="color"] {
+            width: 80px;
+            height: 50px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        .popular-options-section {
+            margin: 25px 0;
+            padding: 20px;
+            background: #fff3cd;
+            border-radius: 12px;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .popular-options-section label {
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #856404;
+            font-size: 16px;
+        }
+        
+        .popular-options-section input[type="checkbox"] {
+            margin-right: 10px;
+            width: 20px;
+            height: 20px;
+            accent-color: #ffc107;
+        }
+        
+        .popular-fields {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fff;
+            border-radius: 8px;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .segment-actions {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .segment-actions .btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .segment-actions .btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+        }
+        
+        /* Language input groups in segments */
+        .segment-item .lang-input-group {
+            margin-bottom: 15px;
+        }
+        
+        .segment-item .lang-input-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #495057;
+            font-size: 14px;
+        }
+        
+        .segment-item .lang-input-group input,
+        .segment-item .lang-input-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        .segment-item .lang-input-group input:focus,
+        .segment-item .lang-input-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        /* File upload styling */
+        .segment-item input[type="file"] {
+            margin-top: 8px;
+            font-size: 12px;
+            padding: 8px;
+            border: 1px dashed #6c757d;
+            border-radius: 6px;
+            background: #f8f9fa;
+            width: 100%;
+        }
+        
+        /* Help text styling */
+        .segment-item .help-text {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 5px;
+            font-style: italic;
+            line-height: 1.4;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .bilingual-segment-group {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .segment-grid {
+                padding: 15px;
+                gap: 15px;
+            }
+            
+            .segment-item {
+                padding: 15px;
+            }
+            
+            .shared-image-section,
+            .shared-color-section {
+                padding: 12px;
+            }
+        }
+        
+        /* Language indicator */
+        .lang-indicator {
+            display: inline-block;
+            padding: 4px 8px;
+            background: #667eea;
+            color: white;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🛠️ Bilingual Admin Panel</h1>
+            <p>Control your Fortune Wheel app content in English and Traditional Chinese</p>
+        </div>
+
+        <!-- Success/Error Messages -->
+        <div id="successMessage" class="success-message"></div>
+        <div id="errorMessage" class="error-message"></div>
+        
+        <!-- Save Actions -->
+        <div style="text-align: center; margin: 20px 0; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+            <button class="btn btn-primary" onclick="saveChanges()" style="margin-right: 10px;">💾 儲存變更 (自動保存)</button>
+            <button class="btn btn-success" onclick="exportCurrentConfig()" style="margin-right: 10px;">📥 下載當前設定</button>
+            <button class="btn btn-warning" onclick="clearStorageAndReload()">🔄 重新載入config.json</button>
+            <button class="btn" onclick="document.getElementById('importConfigInput').click()" style="margin-left: 10px; background: #17a2b8;">📤 匯入設定 (從 config.json)</button>
+            <input id="importConfigInput" type="file" accept="application/json" style="display:none" onchange="handleConfigImport(event)">
+            <div style="margin-top: 10px; font-size: 12px; color: #666;">
+                <strong>💡 使用說明：</strong><br>
+                • 儲存變更：自動保存到瀏覽器暫存，重新整理頁面不會遺失<br>
+                • 下載設定：下載JSON檔案，手動覆蓋 simple-admin/config.json<br>
+                • 重新載入（需要透過 http:// 伺服器）：清除暫存並從config.json重新載入；若以檔案開啟 (file://) 請使用「匯入設定」
+            </div>
+            <div style="margin-top: 15px; padding: 10px; background: #e7f3ff; border-radius: 6px; border-left: 4px solid #2196F3;">
+                <strong>🔄 即時更新：</strong> 所有變更會自動保存到瀏覽器暫存。<br>
+                在前端頁面按 F5 重新整理即可看到最新設定！
+            </div>
+            <div id="corsWarning" style="margin-top: 15px; padding: 10px; background: #fff3cd; border-radius: 6px; border-left: 4px solid #ffc107; display: none;">
+                <strong>⚠️ 本地檔案限制：</strong> 由於瀏覽器安全限制 (file://)，無法直接讀取 config.json。<br>
+                請使用「匯入設定」上傳 config.json，或改用本地伺服器（例如 http://localhost）來避免CORS問題。
+            </div>
+        </div>
+
+        <!-- Combined Bilingual Interface -->
+        <div class="bilingual-header">
+            <h3 style="text-align: center; color: #667eea; margin: 20px 0;">
+                🌍 Bilingual Content Editor - Edit English and Chinese side by side
+            </h3>
+        </div>
+
+        <!-- Unified Bilingual Content -->
+        <div class="bilingual-content">
+            <div class="main-sections">
+                <!-- Header Content Section -->
+                <div class="section">
+                    <h2>📝 Header Content</h2>
+                    
+                    <div class="bilingual-form-group">
+                        <div class="lang-input-group">
+                            <label for="headerTitle_en">🇺🇸 English Title</label>
+                            <input type="text" id="headerTitle_en" maxlength="50" placeholder="Foodie Cat’s Wheel">
+                            <div class="char-counter" id="titleCounter_en">0/50</div>
+                        </div>
+                        
+                        <div class="lang-input-group">
+                            <label for="headerTitle_zh_hk">🇭🇰 中文標題</label>
+                            <input type="text" id="headerTitle_zh_hk" maxlength="50" placeholder="為食貓轉轉盤">
+                            <div class="char-counter" id="titleCounter_zh_hk">0/50</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bilingual-form-group">
+                        <div class="lang-input-group">
+                            <label for="headerSubtitle_en">🇺🇸 English Subtitle</label>
+                            <input type="text" id="headerSubtitle_en" maxlength="80" placeholder="Can’t decide what to eat? Let Foodie Cat spin for you!">
+                            <div class="char-counter" id="subtitleCounter_en">0/80</div>
+                        </div>
+                        
+                        <div class="lang-input-group">
+                            <label for="headerSubtitle_zh_hk">🇭🇰 中文副標題</label>
+                            <input type="text" id="headerSubtitle_zh_hk" maxlength="80" placeholder="食咩好？交俾為食貓幫你決定啦！">
+                            <div class="char-counter" id="subtitleCounter_zh_hk">0/80</div>
+                        </div>
+                    </div>
+                    
+                    <div class="help-text">
+                        <strong>What it controls:</strong> The main title and subtitle at the top of your app<br>
+                        <strong>Recommendation:</strong> Keep titles short and catchy (30-50 characters), subtitles explanatory (60-80 characters)
+                    </div>
+                </div>
+
+                <!-- Buttons Section -->
+                <div class="section">
+                    <h2>🔘 Button Text</h2>
+                    
+                    <div class="bilingual-form-group">
+                        <div class="lang-input-group">
+                            <label for="spinButton_en">🇺🇸 Spin Button</label>
+                            <input type="text" id="spinButton_en" maxlength="25" placeholder="Spin Now!">
+                            <div class="char-counter" id="spinCounter_en">0/25</div>
+                        </div>
+                        
+                        <div class="lang-input-group">
+                            <label for="spinButton_zh_hk">🇭🇰 轉盤按鈕</label>
+                            <input type="text" id="spinButton_zh_hk" maxlength="25" placeholder="立即轉！">
+                            <div class="char-counter" id="spinCounter_zh_hk">0/25</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bilingual-form-group">
+                        <div class="lang-input-group">
+                            <label for="feelingLucky_en">🇺🇸 Bookmark Button</label>
+                            <input type="text" id="feelingLucky_en" maxlength="30" placeholder="Bookmark Foodie Cat">
+                            <div class="char-counter" id="luckyCounter_en">0/30</div>
+                        </div>
+                        
+                        <div class="lang-input-group">
+                            <label for="feelingLucky_zh_hk">🇭🇰 書籤按鈕</label>
+                            <input type="text" id="feelingLucky_zh_hk" maxlength="30" placeholder="收藏為食貓">
+                            <div class="char-counter" id="luckyCounter_zh_hk">0/30</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bilingual-form-group">
+                        <div class="lang-input-group">
+                            <label for="resetWheel_en">🇺🇸 Reset Button</label>
+                            <input type="text" id="resetWheel_en" maxlength="25" placeholder="🔄 Reset Wheel">
+                            <div class="char-counter" id="resetCounter_en">0/25</div>
+                        </div>
+                        
+                        <div class="lang-input-group">
+                            <label for="resetWheel_zh_hk">🇭🇰 重設按鈕</label>
+                            <input type="text" id="resetWheel_zh_hk" maxlength="25" placeholder="🔄 重設轉盤">
+                            <div class="char-counter" id="resetCounter_zh_hk">0/25</div>
+                        </div>
+                    </div>
+
+                    <div class="bilingual-form-group">
+                        <div class="lang-input-group">
+                            <label for="shareResult_en">🇺🇸 Share Result Button</label>
+                            <input type="text" id="shareResult_en" maxlength="30" placeholder="Share with Friends">
+                            <div class="char-counter" id="shareResultCounter_en">0/30</div>
+                        </div>
+                        
+                        <div class="lang-input-group">
+                            <label for="shareResult_zh_hk">🇭🇰 分享結果按鈕</label>
+                            <input type="text" id="shareResult_zh_hk" maxlength="30" placeholder="同朋友分享">
+                            <div class="char-counter" id="shareResultCounter_zh_hk">0/30</div>
+                        </div>
+                    </div>
+                    
+                    <div class="help-text">
+                        <strong>What it controls:</strong> Button text for the main wheel, bookmark, and reset functions<br>
+                        <strong>Recommendation:</strong> Use action words and include relevant emojis
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Wheel Segments Section (Full Width) -->
+            <div class="section wheel-section">
+                <h2>🎡 Wheel Segments</h2>
+                <div class="help-text" style="margin-bottom: 20px;">
+                    <strong>What this controls:</strong> The different food types on your spinning wheel<br>
+                    <strong>How to use:</strong> Each segment needs names in both languages, shared image/emoji, color, and descriptions
+                </div>
+                
+                <div id="segmentsList_unified"></div>
+                
+                                 <div style="text-align: center; margin-top: 20px;">
+                     <button class="btn btn-success" onclick="addSegment('unified')" style="font-size: 16px; padding: 15px 30px;">
+                         ➕ Add New Segment
+                     </button>
+                     <div class="help-text" style="margin-top: 10px; text-align: center;">
+                         Click to add a new food type to your wheel. Each segment will have both English and Chinese names.
+                     </div>
+                 </div>
+            </div>
+            
+            <!-- Popup Section -->
+            <div class="section">
+                <h2>🎉 Result Popup</h2>
+                
+                <div class="bilingual-form-group">
+                    <div class="lang-input-group">
+                        <label for="popupTitle_en">🇺🇸 Popup Title</label>
+                        <input type="text" id="popupTitle_en" maxlength="50" placeholder="Your Culinary Destiny Awaits!">
+                        <div class="char-counter" id="popupTitleCounter_en">0/50</div>
+                    </div>
+                    
+                    <div class="lang-input-group">
+                        <label for="popupTitle_zh_hk">🇭🇰 彈窗標題</label>
+                        <input type="text" id="popupTitle_zh_hk" maxlength="50" placeholder="你嘅美食命運等緊你！">
+                        <div class="char-counter" id="popupTitleCounter_zh_hk">0/50</div>
+                    </div>
+                </div>
+
+                <div class="bilingual-form-group">
+                    <div class="lang-input-group">
+                        <label for="findRestaurants_en">🇺🇸 Find Restaurants Button</label>
+                        <input type="text" id="findRestaurants_en" maxlength="25" placeholder="📍 Find Restaurants">
+                        <div class="char-counter" id="findCounter_en">0/25</div>
+                    </div>
+                    
+                    <div class="lang-input-group">
+                        <label for="findRestaurants_zh_hk">🇭🇰 搵餐廳按鈕</label>
+                        <input type="text" id="findRestaurants_zh_hk" maxlength="25" placeholder="📍 搵附近餐廳">
+                        <div class="char-counter" id="findCounter_zh_hk">0/25</div>
+                    </div>
+                </div>
+
+                <div class="bilingual-form-group">
+                    <div class="lang-input-group">
+                        <label for="spinAgain_en">🇺🇸 Spin Again Button</label>
+                        <input type="text" id="spinAgain_en" maxlength="25" placeholder="🎯 Spin Again">
+                        <div class="char-counter" id="spinAgainCounter_en">0/25</div>
+                    </div>
+                    
+                    <div class="lang-input-group">
+                        <label for="spinAgain_zh_hk">🇭🇰 再轉一次按鈕</label>
+                        <input type="text" id="spinAgain_zh_hk" maxlength="25" placeholder="🎯 再轉一次">
+                        <div class="char-counter" id="spinAgainCounter_zh_hk">0/25</div>
+                    </div>
+                </div>
+
+                <!-- Share Popup Buttons Labels -->
+                <div class="bilingual-form-group">
+                    <div class="lang-input-group">
+                        <label for="sharePopupShare_en">🇺🇸 Share Popup — Share Button</label>
+                        <input type="text" id="sharePopupShare_en" maxlength="30" placeholder="Share with Friends">
+                        <div class="char-counter" id="sharePopupShareCounter_en">0/30</div>
+                    </div>
+                    
+                    <div class="lang-input-group">
+                        <label for="sharePopupShare_zh_hk">🇭🇰 分享彈窗 — 分享按鈕</label>
+                        <input type="text" id="sharePopupShare_zh_hk" maxlength="30" placeholder="同朋友分享">
+                        <div class="char-counter" id="sharePopupShareCounter_zh_hk">0/30</div>
+                    </div>
+                </div>
+
+                <div class="bilingual-form-group">
+                    <div class="lang-input-group">
+                        <label for="sharePopupDownload_en">🇺🇸 Share Popup — Download Button</label>
+                        <input type="text" id="sharePopupDownload_en" maxlength="30" placeholder="Save Result Card">
+                        <div class="char-counter" id="sharePopupDownloadCounter_en">0/30</div>
+                    </div>
+                    
+                    <div class="lang-input-group">
+                        <label for="sharePopupDownload_zh_hk">🇭🇰 分享彈窗 — 下載按鈕</label>
+                        <input type="text" id="sharePopupDownload_zh_hk" maxlength="30" placeholder="儲存結果卡">
+                        <div class="char-counter" id="sharePopupDownloadCounter_zh_hk">0/30</div>
+                    </div>
+                </div>
+                
+                <!-- Global Popular Options Control -->
+                <div class="form-group" style="margin-top: 15px; margin-bottom: 10px; padding: 12px; background: #fff3cd; border-radius: 8px; border: 1px solid #ffeaa7;">
+                    <h4 style="margin: 0 0 8px 0; color: #856404; font-size: 14px;">🌟 Global Popular Options Control</h4>
+                    <label style="font-weight: normal; display: flex; align-items: center; margin: 0;">
+                        <input type="checkbox" id="globalPopularEnabled_unified" onchange="toggleAllPopularOptions('unified', this.checked)" style="margin: 0 8px 0 0; width: 25px; height: 25px;">
+                        Enable popular options for all cuisines (both languages)
+                    </label>
+                    <div class="help-text" style="margin-top: 8px; font-size: 12px;">
+                        <strong>What it controls:</strong> Master switch to enable/disable popular options for all cuisines in both languages<br>
+                        <strong>Note:</strong> Individual cuisine titles and suggestions can still be customized below
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Character Section (Shared) -->
+        <div class="section">
+            <h2>🐱 Character Image (Shared)</h2>
+            
+            <div class="form-group">
+                <label>Current Character</label>
+                <div class="image-upload">
+                    <img id="characterPreview" class="image-preview" src="../Cat.png" alt="Current character">
+                    <div class="help-text">
+                        <strong>What this controls:</strong> The cat character that appears next to your wheel<br>
+                        <strong>Image requirements:</strong> 
+                        <ul style="margin: 10px 0; text-align: left; display: inline-block;">
+                            <li>Size: 400×480 pixels (or similar portrait ratio)</li>
+                            <li>Format: PNG, JPG, or GIF</li>
+                            <li>Background: Transparent PNG works best</li>
+                        </ul>
+                    </div>
+                    <input type="file" id="characterUpload" accept="image/*" style="margin-top: 10px;">
+                </div>
+            </div>
+        </div>
+
+        <!-- Cat Love Images Section (Shared) -->
+        <div class="section">
+            <h2>💖 Cat Love Images (Shared)</h2>
+            <div class="help-text" style="margin-bottom: 10px;">
+                You can upload up to 3 Cat Love images. One will be chosen at random for each result. The same choice is used in the Share popup and downloaded image.
+            </div>
+
+            <div class="form-group">
+                <label>Cat Love Image — Option 1</label>
+                <div class="image-upload">
+                    <img id="catLovePreview1" class="image-preview" src="" alt="Cat Love option 1" style="display:none;">
+                    <div id="catLovePlaceholder1" style="padding: 20px; background: #f8f9fa; border: 2px dashed #dee2e6; border-radius: 8px; text-align: center; color: #6c757d;">
+                        <div style="font-size: 32px; margin-bottom: 8px;">🐱</div>
+                        <div>No image uploaded yet</div>
+                    </div>
+                    <input type="file" id="catLoveUpload1" accept="image/*" style="margin-top: 10px;">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Cat Love Image — Option 2</label>
+                <div class="image-upload">
+                    <img id="catLovePreview2" class="image-preview" src="" alt="Cat Love option 2" style="display:none;">
+                    <div id="catLovePlaceholder2" style="padding: 20px; background: #f8f9fa; border: 2px dashed #dee2e6; border-radius: 8px; text-align: center; color: #6c757d;">
+                        <div style="font-size: 32px; margin-bottom: 8px;">🐱</div>
+                        <div>No image uploaded yet</div>
+                    </div>
+                    <input type="file" id="catLoveUpload2" accept="image/*" style="margin-top: 10px;">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Cat Love Image — Option 3</label>
+                <div class="image-upload">
+                    <img id="catLovePreview3" class="image-preview" src="" alt="Cat Love option 3" style="display:none;">
+                    <div id="catLovePlaceholder3" style="padding: 20px; background: #f8f9fa; border: 2px dashed #dee2e6; border-radius: 8px; text-align: center; color: #6c757d;">
+                        <div style="font-size: 32px; margin-bottom: 8px;">🐱</div>
+                        <div>No image uploaded yet</div>
+                    </div>
+                    <input type="file" id="catLoveUpload3" accept="image/*" style="margin-top: 10px;">
+                </div>
+            </div>
+        </div>
+
+        <!-- Save Section -->
+        <div class="section">
+            <button class="btn" onclick="saveChanges()" style="width: 100%; font-size: 16px; padding: 15px;">
+                💾 Save All Changes (Both Languages)
+            </button>
+            
+            <a href="../index.html" class="preview-link" target="_blank">
+                👁️ Preview Your App (opens in new tab)
+            </a>
+        </div>
+    </div>
+
+    <script>
+        let config = {};
+
+
+
+        // Image compression helpers to keep storage under quota
+        async function compressDataUrl(dataUrl, maxWidth, maxHeight, quality = 0.9) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => {
+                    const ratio = Math.min(maxWidth / img.width, maxHeight / img.height, 1);
+                    const w = Math.max(1, Math.round(img.width * ratio));
+                    const h = Math.max(1, Math.round(img.height * ratio));
+                    const canvas = document.createElement('canvas');
+                    canvas.width = w;
+                    canvas.height = h;
+                    const ctx = canvas.getContext('2d', { willReadFrequently: false });
+                    ctx.drawImage(img, 0, 0, w, h);
+
+                    // Try WebP, then PNG, then JPEG
+                    const tryTypes = ['image/webp', 'image/png', 'image/jpeg'];
+                    for (const type of tryTypes) {
+                        try {
+                            const out = canvas.toDataURL(type, quality);
+                            if (out && typeof out === 'string' && out.startsWith(`data:${type}`)) {
+                                return resolve(out);
+                            }
+                        } catch (_) { /* ignore and try next */ }
+                    }
+                    // Fallback
+                    resolve(canvas.toDataURL('image/png'));
+                };
+                img.onerror = () => resolve(dataUrl);
+                img.src = dataUrl;
+            });
+        }
+
+        // Load configuration
+        async function loadConfig() {
+            try {
+                // 0) If hash carries localStorage payload from hotkey open, load it
+                try {
+                    if (location.hash.startsWith('#ls=')) {
+                        const b64 = decodeURIComponent(location.hash.substring(4));
+                        const text = atob(b64);
+                        const fromHash = JSON.parse(text);
+                        if (fromHash && fromHash.languages) {
+                            localStorage.setItem('fortuneWheelConfig', JSON.stringify(fromHash));
+                            config = fromHash;
+                            console.log('✅ Loaded configuration from URL hash payload');
+                            // Clear hash to avoid reprocessing
+                            history.replaceState(null, '', location.pathname);
+                            return;
+                        }
+                    }
+                } catch (e) { console.warn('Hash payload ignored:', e); }
+                // 1) Prefer localStorage (most up-to-date from admin saves)
+                const savedConfig = localStorage.getItem('fortuneWheelConfig');
+                if (savedConfig) {
+                    config = JSON.parse(savedConfig);
+                    console.log('✅ Loaded configuration from localStorage (preferred)');
+                    return;
+                }
+
+                // 2) Otherwise, try config.json only when running via http/https
+                const response = (window.location.protocol === 'file:') ? null : await fetch('config.json');
+                if (response && response.ok) {
+                    config = await response.json();
+                    console.log('✅ Loaded configuration from config.json');
+                } else {
+                    throw new Error('Config file not found or blocked');
+                }
+            } catch (error) {
+                console.log('⚠️ Could not load config.json, checking localStorage...');
+                
+                // 3) Fallback: default bilingual config
+                const savedConfig2 = localStorage.getItem('fortuneWheelConfig');
+                if (savedConfig2) {
+                    config = JSON.parse(savedConfig2);
+                    console.log('✅ Loaded configuration from localStorage');
+                } else {
+                    config = {
+                        currentLanguage: "en",
+                        languages: {
+                            en: {
+                                header: { title: "🍽️ What to Eat Tonight?", subtitle: "Let the magic decide your next delicious meal" },
+                                wheelSegments: [
+                                    { name: "Italian", icon: "🍕", color: "#FF6B9D", description: "Time for some delicious pasta, pizza, or risotto!", imageUrl: null },
+                                    { name: "Chinese", icon: "🥢", color: "#6BCF7F", description: "Enjoy authentic flavors from the Middle Kingdom!", imageUrl: null }
+                                ],
+                                buttons: { spinButton: "PRESS TO SPIN", feelingLucky: "🎲 I'm Feeling Lucky", resetWheel: "🔄 Reset Wheel" },
+                                popup: { title: "Your Culinary Destiny Awaits!", findRestaurants: "📍 Find Restaurants", spinAgain: "🎯 Spin Again" }
+                            },
+                            zh_hk: {
+                                header: { title: "🍽️ 今晚食咩好？", subtitle: "讓命運決定你嘅下一餐美食" },
+                                wheelSegments: [
+                                    { name: "意大利菜", icon: "🍕", color: "#FF6B9D", description: "品嚐美味嘅意粉、薄餅或者意式燴飯！", imageUrl: null },
+                                    { name: "中菜", icon: "🥢", color: "#6BCF7F", description: "享受正宗嘅中華美食風味！", imageUrl: null }
+                                ],
+                                buttons: { spinButton: "按此轉盤", feelingLucky: "🎲 我手氣不錯", resetWheel: "🔄 重設轉盤" },
+                                popup: { title: "你嘅美食命運等緊你！", findRestaurants: "📍 搵附近餐廳", spinAgain: "🎯 再轉一次" }
+                            }
+                        },
+                        character: { imagePath: "Cat.png", enabled: true }
+                    };
+                    console.log('✅ Created default bilingual configuration');
+                }
+            }
+
+            // Ensure both languages exist with proper structure
+            if (!config.languages) {
+                config.languages = { en: {}, zh_hk: {} };
+            }
+            if (!config.languages.en) config.languages.en = {};
+            if (!config.languages.zh_hk) config.languages.zh_hk = {};
+            
+            // Ensure each language has required structure
+            ['en', 'zh_hk'].forEach(lang => {
+                if (!config.languages[lang].header) config.languages[lang].header = {};
+                if (!config.languages[lang].buttons) config.languages[lang].buttons = {};
+                if (!config.languages[lang].popup) config.languages[lang].popup = {};
+                if (!config.languages[lang].wheelSegments) config.languages[lang].wheelSegments = [];
+            });
+            
+            console.log('🔧 Final config structure:', config);
+
+            // Populate form fields for both languages
+            populateFormFields('en');
+            populateFormFields('zh_hk');
+            
+            // Populate wheel segments with popular options (unified view)
+            populateSegments('unified');
+            updateAllCounters();
+        }
+
+        // Populate form fields for a specific language
+        function populateFormFields(lang) {
+            const langData = config.languages[lang];
+            
+            if (!langData) {
+                console.error(`❌ No language data found for: ${lang}`);
+                return;
+            }
+
+            // Helper: if field empty, use its placeholder as default and persist
+            const defaultFromPlaceholder = (inputEl, assignFn) => {
+                if (!inputEl) return;
+                const val = (inputEl.value || '').trim();
+                if (!val) {
+                    const ph = (inputEl.getAttribute('placeholder') || '').trim();
+                    if (ph) {
+                        assignFn(ph);
+                        inputEl.value = ph;
+                        autoSaveToLocalStorage();
+                    }
+                }
+            };
+
+            // Header fields
+            const titleField = document.getElementById(`headerTitle_${lang}`);
+            const subtitleField = document.getElementById(`headerSubtitle_${lang}`);
+            
+            if (titleField) {
+                titleField.value = langData.header?.title || '';
+                // Add change listener for auto-save
+                titleField.addEventListener('input', () => {
+                    config.languages[lang].header.title = titleField.value;
+                    autoSaveToLocalStorage();
+                });
+                defaultFromPlaceholder(titleField, (v) => { config.languages[lang].header.title = v; });
+            }
+            
+            if (subtitleField) {
+                subtitleField.value = langData.header?.subtitle || '';
+                // Add change listener for auto-save
+                subtitleField.addEventListener('input', () => {
+                    config.languages[lang].header.subtitle = subtitleField.value;
+                    autoSaveToLocalStorage();
+                });
+                defaultFromPlaceholder(subtitleField, (v) => { config.languages[lang].header.subtitle = v; });
+            }
+
+            // Button fields
+            const spinButtonField = document.getElementById(`spinButton_${lang}`);
+            const feelingLuckyField = document.getElementById(`feelingLucky_${lang}`);
+            const resetWheelField = document.getElementById(`resetWheel_${lang}`);
+            const shareResultField = document.getElementById(`shareResult_${lang}`);
+            
+            if (spinButtonField) {
+                spinButtonField.value = langData.buttons.spinButton || '';
+                spinButtonField.addEventListener('input', () => {
+                    config.languages[lang].buttons.spinButton = spinButtonField.value;
+                    autoSaveToLocalStorage();
+                });
+                defaultFromPlaceholder(spinButtonField, (v) => { config.languages[lang].buttons.spinButton = v; });
+            }
+            
+            if (feelingLuckyField) {
+                feelingLuckyField.value = langData.buttons.feelingLucky || '';
+                feelingLuckyField.addEventListener('input', () => {
+                    config.languages[lang].buttons.feelingLucky = feelingLuckyField.value;
+                    autoSaveToLocalStorage();
+                });
+                defaultFromPlaceholder(feelingLuckyField, (v) => { config.languages[lang].buttons.feelingLucky = v; });
+            }
+            
+            if (resetWheelField) {
+                resetWheelField.value = langData.buttons.resetWheel || '';
+                resetWheelField.addEventListener('input', () => {
+                    config.languages[lang].buttons.resetWheel = resetWheelField.value;
+                    autoSaveToLocalStorage();
+                });
+                defaultFromPlaceholder(resetWheelField, (v) => { config.languages[lang].buttons.resetWheel = v; });
+            }
+
+            if (shareResultField) {
+                shareResultField.value = langData.buttons?.shareResult || '';
+                shareResultField.addEventListener('input', () => {
+                    if (!config.languages[lang].buttons) config.languages[lang].buttons = {};
+                    config.languages[lang].buttons.shareResult = shareResultField.value;
+                    autoSaveToLocalStorage();
+                });
+                defaultFromPlaceholder(shareResultField, (v) => { if (!config.languages[lang].buttons) config.languages[lang].buttons = {}; config.languages[lang].buttons.shareResult = v; });
+            }
+
+            // Popup fields
+            const popupTitleField = document.getElementById(`popupTitle_${lang}`);
+            const findRestaurantsField = document.getElementById(`findRestaurants_${lang}`);
+            const spinAgainField = document.getElementById(`spinAgain_${lang}`);
+            const sharePopupShareField = document.getElementById(`sharePopupShare_${lang}`);
+            const sharePopupDownloadField = document.getElementById(`sharePopupDownload_${lang}`);
+            
+            if (popupTitleField) {
+                popupTitleField.value = langData.popup.title || '';
+                popupTitleField.addEventListener('input', () => {
+                    config.languages[lang].popup.title = popupTitleField.value;
+                    autoSaveToLocalStorage();
+                });
+                defaultFromPlaceholder(popupTitleField, (v) => { config.languages[lang].popup.title = v; });
+            }
+            
+            if (findRestaurantsField) {
+                findRestaurantsField.value = langData.popup.findRestaurants || '';
+                findRestaurantsField.addEventListener('input', () => {
+                    config.languages[lang].popup.findRestaurants = findRestaurantsField.value;
+                    autoSaveToLocalStorage();
+                });
+                defaultFromPlaceholder(findRestaurantsField, (v) => { config.languages[lang].popup.findRestaurants = v; });
+            }
+            
+            if (spinAgainField) {
+                spinAgainField.value = langData.popup.spinAgain || '';
+                spinAgainField.addEventListener('input', () => {
+                    config.languages[lang].popup.spinAgain = spinAgainField.value;
+                    autoSaveToLocalStorage();
+                });
+                defaultFromPlaceholder(spinAgainField, (v) => { config.languages[lang].popup.spinAgain = v; });
+            }
+
+            if (sharePopupShareField) {
+                sharePopupShareField.value = langData.popup?.sharePopupShare || '';
+                sharePopupShareField.addEventListener('input', () => {
+                    if (!config.languages[lang].popup) config.languages[lang].popup = {};
+                    config.languages[lang].popup.sharePopupShare = sharePopupShareField.value;
+                    autoSaveToLocalStorage();
+                });
+                defaultFromPlaceholder(sharePopupShareField, (v) => { if (!config.languages[lang].popup) config.languages[lang].popup = {}; config.languages[lang].popup.sharePopupShare = v; });
+            }
+
+            if (sharePopupDownloadField) {
+                sharePopupDownloadField.value = langData.popup?.sharePopupDownload || '';
+                sharePopupDownloadField.addEventListener('input', () => {
+                    if (!config.languages[lang].popup) config.languages[lang].popup = {};
+                    config.languages[lang].popup.sharePopupDownload = sharePopupDownloadField.value;
+                    autoSaveToLocalStorage();
+                });
+                defaultFromPlaceholder(sharePopupDownloadField, (v) => { if (!config.languages[lang].popup) config.languages[lang].popup = {}; config.languages[lang].popup.sharePopupDownload = v; });
+            }
+
+            if (sharePopupShareField) {
+                sharePopupShareField.value = langData.popup?.sharePopupShare || '';
+                sharePopupShareField.addEventListener('input', () => {
+                    if (!config.languages[lang].popup) config.languages[lang].popup = {};
+                    config.languages[lang].popup.sharePopupShare = sharePopupShareField.value;
+                    autoSaveToLocalStorage();
+                });
+            }
+
+            if (sharePopupDownloadField) {
+                sharePopupDownloadField.value = langData.popup?.sharePopupDownload || '';
+                sharePopupDownloadField.addEventListener('input', () => {
+                    if (!config.languages[lang].popup) config.languages[lang].popup = {};
+                    config.languages[lang].popup.sharePopupDownload = sharePopupDownloadField.value;
+                    autoSaveToLocalStorage();
+                });
+            }
+
+            // Global Popular Options Control
+            const globalPopularCheckbox = document.getElementById(`globalPopularEnabled_${lang}`);
+            if (globalPopularCheckbox && langData.wheelSegments) {
+                // Check if all segments have popularOptions enabled
+                const allEnabled = langData.wheelSegments.every(segment => 
+                    segment.popularOptions?.enabled === true
+                );
+                globalPopularCheckbox.checked = allEnabled;
+            }
+        }
+
+        // Populate wheel segments for a specific language or unified view
+        function populateSegments(lang) {
+            if (lang === 'unified') {
+                const container = document.getElementById('segmentsList_unified');
+                container.innerHTML = '';
+                
+                // Get segments from English (assuming both languages have same number of segments)
+                const enSegments = config.languages.en?.wheelSegments || [];
+                const zhSegments = config.languages.zh_hk?.wheelSegments || [];
+                
+                enSegments.forEach((enSegment, index) => {
+                    const zhSegment = zhSegments[index] || {};
+                    const segmentDiv = document.createElement('div');
+                    segmentDiv.className = 'segment-item';
+                    segmentDiv.innerHTML = `
+                        <h3 style="margin: 0 0 20px 0; color: #667eea; font-size: 18px; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">
+                            🍽️ Segment ${index + 1}
+                        </h3>
+                        
+                        <div class="bilingual-segment-group">
+                            <div class="lang-input-group">
+                                <label>🇺🇸 English Name</label>
+                                <input type="text" value="${enSegment.name || ''}" maxlength="20" 
+                                       onchange="updateSegment('en', ${index}, 'name', this.value)"
+                                       placeholder="e.g., Italian, Chinese, Japanese">
+                            </div>
+                            <div class="lang-input-group">
+                                <label>🇭🇰 中文名稱</label>
+                                <input type="text" value="${zhSegment.name || ''}" maxlength="20" 
+                                       onchange="updateSegment('zh_hk', ${index}, 'name', this.value)"
+                                       placeholder="例如：意大利菜、中菜、日本菜">
+                            </div>
+                        </div>
+                        
+                        <div class="bilingual-segment-group">
+                            <div class="shared-image-section">
+                                <label>🖼️ Shared Image/Icon</label>
+                                <input type="text" value="${enSegment.icon || '🍽️'}" maxlength="2" 
+                                       onchange="updateSegment('en', ${index}, 'icon', this.value); updateSegment('zh_hk', ${index}, 'icon', this.value)">
+                                <div class="help-text">Emoji icon${enSegment.imageUrl ? ' (Image uploaded ✓)' : ''}</div>
+                                <input type="file" accept="image/*" onchange="handleSegmentImageUpload('unified', ${index}, event)">
+                                <div class="help-text">Or upload custom image (32x32px recommended) - Shared for both languages</div>
+                            </div>
+                            
+                            <div class="shared-color-section">
+                                <label>🎨 Color</label>
+                                <input type="color" value="${enSegment.color || '#FF6B9D'}"
+                                       onchange="updateSegment('en', ${index}, 'color', this.value); updateSegment('zh_hk', ${index}, 'color', this.value)">
+                                <div class="help-text">Segment color (shared)</div>
+                            </div>
+                        </div>
+                        
+                        <div class="bilingual-segment-group">
+                            <div class="lang-input-group">
+                                <label>🇺🇸 English Description</label>
+                                <textarea rows="3" maxlength="100" 
+                                          onchange="updateSegment('en', ${index}, 'description', this.value)"
+                                          placeholder="Describe this cuisine type...">${enSegment.description || ''}</textarea>
+                            </div>
+                            <div class="lang-input-group">
+                                <label>🇭🇰 中文描述</label>
+                                <textarea rows="3" maxlength="100" 
+                                          onchange="updateSegment('zh_hk', ${index}, 'description', this.value)"
+                                          placeholder="描述這個菜系...">${zhSegment.description || ''}</textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="popular-options-section">
+                            <label>
+                                <input type="checkbox" ${enSegment.popularOptions?.enabled ? 'checked' : ''} 
+                                       onchange="updateSegmentPopularOptions('en', ${index}, 'enabled', this.checked); updateSegmentPopularOptions('zh_hk', ${index}, 'enabled', this.checked)">
+                                🌟 Enable Popular Options for this cuisine
+                            </label>
+                            <div class="popular-fields" style="display: ${enSegment.popularOptions?.enabled ? 'block' : 'none'};">
+                                <div class="bilingual-form-group">
+                                    <div class="lang-input-group">
+                                        <label>🇺🇸 Popular Options Title</label>
+                                        <input type="text" value="${enSegment.popularOptions?.title || ''}" maxlength="30"
+                                               onchange="updateSegmentPopularOptions('en', ${index}, 'title', this.value)"
+                                               placeholder="e.g., Popular Options:">
+                                    </div>
+                                    <div class="lang-input-group">
+                                        <label>🇭🇰 熱門選擇標題</label>
+                                        <input type="text" value="${zhSegment.popularOptions?.title || ''}" maxlength="30"
+                                               onchange="updateSegmentPopularOptions('zh_hk', ${index}, 'title', this.value)"
+                                               placeholder="例如：熱門選擇：">
+                                    </div>
+                                </div>
+                                <div class="bilingual-form-group">
+                                    <div class="lang-input-group">
+                                        <label>🇺🇸 Popular Options (one per line)</label>
+                                        <textarea rows="3" maxlength="200" 
+                                                  onchange="updateSegmentPopularOptions('en', ${index}, 'suggestions', this.value.split('\\n').filter(s => s.trim()))"
+                                                  placeholder="Chef's Special\nHouse Favorite\nCustomer Choice">${enSegment.popularOptions?.suggestions?.join('\\n') || ''}</textarea>
+                                    </div>
+                                    <div class="lang-input-group">
+                                        <label>🇭🇰 熱門選擇（每行一個）</label>
+                                        <textarea rows="3" maxlength="200" 
+                                                  onchange="updateSegmentPopularOptions('zh_hk', ${index}, 'suggestions', this.value.split('\\n').filter(s => s.trim()))"
+                                                                                                     placeholder="主廚特薦\n招牌菜式\n客人推薦">${zhSegment.popularOptions?.suggestions?.join('\\n') || ''}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="segment-actions">
+                            <button class="btn btn-danger btn-small" onclick="removeSegment('unified', ${index})">
+                                🗑️ Remove Segment
+                            </button>
+                        </div>
+                    `;
+                    container.appendChild(segmentDiv);
+                });
+            } else {
+                // Legacy support for individual language
+                const container = document.getElementById(`segmentsList_${lang}`);
+                container.innerHTML = '';
+                
+                const langData = config.languages[lang];
+                if (!langData || !langData.wheelSegments) return;
+                
+                langData.wheelSegments.forEach((segment, index) => {
+                    const segmentDiv = document.createElement('div');
+                    segmentDiv.className = 'segment-item';
+                    segmentDiv.innerHTML = `
+                        <div class="segment-grid">
+                            <div>
+                                <label>Name</label>
+                                <input type="text" value="${segment.name}" maxlength="20" 
+                                       onchange="updateSegment('${lang}', ${index}, 'name', this.value)">
+                                <div class="help-text">Food type name</div>
+                            </div>
+                            <div>
+                                <label>Icon</label>
+                                <input type="text" value="${segment.icon}" maxlength="2" 
+                                       onchange="updateSegment('${lang}', ${index}, 'icon', this.value)"
+                                       style="text-align: center; font-size: 20px;">
+                                <div class="help-text">Emoji icon${segment.imageUrl ? ' (Image uploaded ✓)' : ''}</div>
+                                <input type="file" accept="image/*" onchange="handleSegmentImageUpload('${lang}', ${index}, event)" 
+                                       style="margin-top: 5px; font-size: 12px;">
+                                <div class="help-text" style="font-size: 10px;">Or upload custom image (32x32px recommended)</div>
+                            </div>
+                            <div>
+                                <label>Color</label>
+                                <input type="color" value="${segment.color}" class="color-input"
+                                       onchange="updateSegment('${lang}', ${index}, 'color', this.value)">
+                                <div class="help-text">Segment color</div>
+                            </div>
+                            <div>
+                                <label>Description</label>
+                                <textarea rows="2" maxlength="100" 
+                                          onchange="updateSegment('${lang}', ${index}, 'description', this.value)">${segment.description}</textarea>
+                                <div class="help-text">Short description shown in popup</div>
+                                <button class="btn btn-danger btn-small" onclick="removeSegment('${lang}', ${index})" style="background: #dc3545; margin-top: 10px;">
+                                    Remove
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(segmentDiv);
+                });
+            }
+        }
+
+        // Update segment data
+        function updateSegment(lang, index, field, value) {
+            console.log(`🔄 Updating segment: lang=${lang}, index=${index}, field=${field}, value=${value}`);
+            
+            if (!config.languages[lang]) {
+                config.languages[lang] = {};
+            }
+            if (!config.languages[lang].wheelSegments) {
+                config.languages[lang].wheelSegments = [];
+            }
+            if (!config.languages[lang].wheelSegments[index]) {
+                config.languages[lang].wheelSegments[index] = {};
+            }
+            
+            config.languages[lang].wheelSegments[index][field] = value;
+            console.log(`✅ Updated config:`, config.languages[lang].wheelSegments[index]);
+            
+            // Auto-save to localStorage after each change
+            try {
+                localStorage.setItem('fortuneWheelConfig', JSON.stringify(config));
+                console.log('💾 Auto-saved segment change to localStorage');
+            } catch (error) {
+                console.error('❌ Error auto-saving segment change:', error);
+            }
+        }
+
+        // Add new segment
+        function addSegment(lang) {
+            console.log('🔄 Adding segment for language:', lang);
+            console.log('📋 Current config:', config);
+            
+            // Ensure config structure exists
+            if (!config.languages) {
+                config.languages = {};
+            }
+            if (!config.languages[lang]) {
+                config.languages[lang] = {};
+            }
+            if (!config.languages[lang].wheelSegments) {
+                config.languages[lang].wheelSegments = [];
+            }
+            
+            if (lang === 'unified') {
+                // Add to both languages
+                ['en', 'zh_hk'].forEach(l => {
+                    if (!config.languages[l]) {
+                        config.languages[l] = {};
+                    }
+                    if (!config.languages[l].wheelSegments) {
+                        config.languages[l].wheelSegments = [];
+                    }
+                    
+                    config.languages[l].wheelSegments.push({
+                        name: l === 'en' ? "New Food" : "新美食",
+                        icon: "🍽️",
+                        color: "#FF6B9D",
+                        description: l === 'en' ? "Delicious food option!" : "美味的美食選擇！",
+                        imageUrl: null,
+                        popularOptions: {
+                            enabled: false,
+                            title: l === 'en' ? "Popular Options:" : "熱門選擇：",
+                            suggestions: []
+                        }
+                    });
+                });
+                
+                populateSegments('unified');
+                
+                // Save changes immediately
+                try {
+                    localStorage.setItem('fortuneWheelConfig', JSON.stringify(config));
+                    console.log('💾 New segment saved to localStorage:', config);
+                    showSuccess('✅ New segment added and saved! Check your app to see the changes.');
+                } catch (error) {
+                    console.error('❌ Error saving new segment:', error);
+                    showError('❌ Error saving new segment: ' + error.message);
+                }
+                
+            } else {
+                // Legacy support for individual language
+                if (!config.languages[lang].wheelSegments) {
+                    config.languages[lang].wheelSegments = [];
+                }
+                
+                config.languages[lang].wheelSegments.push({
+                    name: "New Food",
+                    icon: "🍽️",
+                    color: "#FF6B9D",
+                    description: "Delicious food option!",
+                    imageUrl: null
+                });
+                
+                populateSegments(lang);
+                
+                // Save changes immediately
+                try {
+                    localStorage.setItem('fortuneWheelConfig', JSON.stringify(config));
+                    console.log('💾 New segment saved to localStorage:', config);
+                    showSuccess('✅ New segment added and saved! Check your app to see the changes.');
+                } catch (error) {
+                    console.error('❌ Error saving new segment:', error);
+                    showError('❌ Error saving new segment: ' + error.message);
+                }
+            }
+        }
+
+        // Remove segment
+        function removeSegment(lang, index) {
+            console.log('🗑️ Removing segment for language:', lang, 'index:', index);
+            
+            // Ensure config structure exists
+            if (!config.languages) {
+                config.languages = {};
+            }
+            if (!config.languages[lang]) {
+                config.languages[lang] = {};
+            }
+            if (!config.languages[lang].wheelSegments) {
+                config.languages[lang].wheelSegments = [];
+            }
+            
+            if (lang === 'unified') {
+                // Remove from both languages
+                ['en', 'zh_hk'].forEach(l => {
+                    if (!config.languages[l]) {
+                        config.languages[l] = {};
+                    }
+                    if (!config.languages[l].wheelSegments) {
+                        config.languages[l].wheelSegments = [];
+                    }
+                    
+                    if (config.languages[l].wheelSegments.length <= 2) {
+                        showError('You must have at least 2 wheel segments!');
+                        return;
+                    }
+                    config.languages[l].wheelSegments.splice(index, 1);
+                });
+                populateSegments('unified');
+                
+                // Save changes immediately
+                try {
+                    localStorage.setItem('fortuneWheelConfig', JSON.stringify(config));
+                    console.log('💾 Segment removed and saved to localStorage:', config);
+                    showSuccess('✅ Segment removed and saved! Check your app to see the changes.');
+                } catch (error) {
+                    console.error('❌ Error saving segment removal:', error);
+                    showError('❌ Error saving segment removal: ' + error.message);
+                }
+                
+            } else {
+                // Legacy support for individual language
+                if (config.languages[lang].wheelSegments.length <= 2) {
+                    showError('You must have at least 2 wheel segments!');
+                    return;
+                }
+                config.languages[lang].wheelSegments.splice(index, 1);
+                populateSegments(lang);
+                
+                // Save changes immediately
+                try {
+                    localStorage.setItem('fortuneWheelConfig', JSON.stringify(config));
+                    console.log('💾 Segment removed and saved to localStorage:', config);
+                    showSuccess('✅ Segment removed and saved! Check your app to see the changes.');
+                } catch (error) {
+                    console.error('❌ Error saving segment removal:', error);
+                    showError('❌ Error saving segment removal: ' + error.message);
+                }
+            }
+        }
+
+        // Handle image uploads
+        async function handleCharacterImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    const compressed = await compressDataUrl(e.target.result, 400, 480, 0.85);
+                    config.character.imagePath = compressed;
+                    showSuccess('Character image uploaded successfully!');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        async function handleCatLoveImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    // Migrate to array-based storage
+                    if (!config.catLove) config.catLove = {};
+                    if (!Array.isArray(config.catLove.images)) config.catLove.images = [null, null, null];
+
+                    const inputId = event.target.id; // catLoveUpload1|2|3
+                    const idx = inputId.endsWith('1') ? 0 : inputId.endsWith('2') ? 1 : 2;
+                    const compressed = await compressDataUrl(e.target.result, 400, 480, 0.85);
+                    config.catLove.images[idx] = compressed;
+
+                    // Update the preview for this slot
+                    const preview = document.getElementById(`catLovePreview${idx+1}`);
+                    const placeholder = document.getElementById(`catLovePlaceholder${idx+1}`);
+                    if (preview) {
+                        preview.src = e.target.result;
+                        preview.style.display = 'block';
+                    }
+                    if (placeholder) {
+                        placeholder.style.display = 'none';
+                    }
+
+                    autoSaveToLocalStorage();
+                    showSuccess(`Cat Love image ${idx+1} uploaded successfully!`);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        async function handleSegmentImageUpload(lang, index, event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    const compressed = await compressDataUrl(e.target.result, 256, 256, 0.88);
+                    if (lang === 'unified') {
+                        // Upload to both languages
+                        ['en', 'zh_hk'].forEach(l => {
+                            if (config.languages[l].wheelSegments && config.languages[l].wheelSegments[index]) {
+                                config.languages[l].wheelSegments[index].imageUrl = compressed;
+                                config.languages[l].wheelSegments[index].icon = '🖼️';
+                            }
+                        });
+                        populateSegments('unified');
+                        showSuccess(`Image uploaded for segment ${index + 1} in both languages!`);
+                    } else {
+                        // Legacy support for individual language
+                        config.languages[lang].wheelSegments[index].imageUrl = compressed;
+                        config.languages[lang].wheelSegments[index].icon = '🖼️';
+                        populateSegments(lang);
+                        showSuccess(`Image uploaded for segment ${index + 1}!`);
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Character counters
+        function setupCharacterCounters() {
+            const fieldMappings = [
+                { field: 'headerTitle', counter: 'titleCounter' },
+                { field: 'headerSubtitle', counter: 'subtitleCounter' },
+                { field: 'spinButton', counter: 'spinCounter' },
+                { field: 'feelingLucky', counter: 'luckyCounter' },
+                { field: 'resetWheel', counter: 'resetCounter' },
+                { field: 'popupTitle', counter: 'popupTitleCounter' },
+                { field: 'findRestaurants', counter: 'findCounter' },
+                { field: 'spinAgain', counter: 'spinAgainCounter' },
+                { field: 'shareResult', counter: 'shareResultCounter' },
+                { field: 'sharePopupShare', counter: 'sharePopupShareCounter' },
+                { field: 'sharePopupDownload', counter: 'sharePopupDownloadCounter' },
+                { field: 'popularOptionsTitle', counter: 'popularTitleCounter' }
+            ];
+            
+            ['en', 'zh_hk'].forEach(lang => {
+                fieldMappings.forEach(mapping => {
+                    const input = document.getElementById(`${mapping.field}_${lang}`);
+                    const counter = document.getElementById(`${mapping.counter}_${lang}`);
+                    
+                    if (input && counter) {
+                        input.addEventListener('input', () => {
+                            const length = input.value.length;
+                            const maxLength = input.maxLength;
+                            counter.textContent = `${length}/${maxLength}`;
+                            
+                            if (length > maxLength * 0.9) {
+                                counter.classList.add('warning');
+                            } else {
+                                counter.classList.remove('warning');
+                            }
+                            
+                            if (length >= maxLength) {
+                                counter.classList.add('error');
+                            } else {
+                                counter.classList.remove('error');
+                            }
+                        });
+                    }
+                });
+            });
+        }
+
+        function updateAllCounters() {
+            // Trigger input events to update counters
+            ['en', 'zh_hk'].forEach(lang => {
+                ['headerTitle', 'headerSubtitle', 'spinButton', 'feelingLucky', 'resetWheel', 'popupTitle', 'findRestaurants', 'spinAgain', 'shareResult', 'sharePopupShare', 'sharePopupDownload'].forEach(field => {
+                    const input = document.getElementById(`${field}_${lang}`);
+                    if (input) {
+                        input.dispatchEvent(new Event('input'));
+                    }
+                });
+            });
+        }
+
+        // Save changes
+        async function saveChanges() {
+            try {
+                console.log('💾 Starting save process...');
+                console.log('📋 Current config before save:', config);
+                
+                // Update config with form values for both languages
+                ['en', 'zh_hk'].forEach(lang => {
+                    console.log(`📝 Saving data for language: ${lang}`);
+                    
+                    const titleValue = document.getElementById(`headerTitle_${lang}`).value;
+                    const subtitleValue = document.getElementById(`headerSubtitle_${lang}`).value;
+                    
+                    console.log(`   Title: "${titleValue}"`);
+                    console.log(`   Subtitle: "${subtitleValue}"`);
+                    
+                    config.languages[lang].header.title = titleValue;
+                    config.languages[lang].header.subtitle = subtitleValue;
+                    
+                    config.languages[lang].buttons.spinButton = document.getElementById(`spinButton_${lang}`).value;
+                    config.languages[lang].buttons.feelingLucky = document.getElementById(`feelingLucky_${lang}`).value;
+                    config.languages[lang].buttons.resetWheel = document.getElementById(`resetWheel_${lang}`).value;
+                    config.languages[lang].buttons.shareResult = document.getElementById(`shareResult_${lang}`).value;
+                    
+                    config.languages[lang].popup.title = document.getElementById(`popupTitle_${lang}`).value;
+                    config.languages[lang].popup.findRestaurants = document.getElementById(`findRestaurants_${lang}`).value;
+                    config.languages[lang].popup.spinAgain = document.getElementById(`spinAgain_${lang}`).value;
+                    config.languages[lang].popup.sharePopupShare = document.getElementById(`sharePopupShare_${lang}`).value;
+                    config.languages[lang].popup.sharePopupDownload = document.getElementById(`sharePopupDownload_${lang}`).value;
+                    
+                    // Popular Options now handled in individual segments
+                });
+
+                // IMPORTANT: Wheel segments are already updated in config object from the form inputs
+                // The updateSegment() and updateSegmentPopularOptions() functions modify config directly
+                console.log('🎡 Wheel segments data preserved in config:', config.languages.en?.wheelSegments);
+
+                // Validate required fields
+                ['en', 'zh_hk'].forEach(lang => {
+                    if (!config.languages[lang].header.title.trim()) {
+                        throw new Error(`Header title is required for ${lang === 'en' ? 'English' : 'Chinese'}!`);
+                    }
+                    if (config.languages[lang].wheelSegments.length < 2) {
+                        throw new Error(`You need at least 2 wheel segments for ${lang === 'en' ? 'English' : 'Chinese'}!`);
+                    }
+                });
+
+                // Ensure current language is preserved
+                if (!config.currentLanguage) {
+                    config.currentLanguage = 'en';
+                }
+
+                // Save to localStorage with quota guarding (trim large fields if needed)
+                let dataStr = JSON.stringify(config);
+                try {
+                    localStorage.setItem('fortuneWheelConfig', dataStr);
+                } catch (e) {
+                    console.warn('⚠️ Quota exceeded on first attempt, trying to shrink images...', e);
+                    // Attempt to shrink segment images further
+                    const shrink = async () => {
+                        const langs = ['en','zh_hk'];
+                        for (const l of langs) {
+                            const segs = config.languages?.[l]?.wheelSegments || [];
+                            for (const s of segs) {
+                                if (s.imageUrl && typeof s.imageUrl === 'string' && s.imageUrl.startsWith('data:')) {
+                                    s.imageUrl = await compressDataUrl(s.imageUrl, 192, 192, 0.82);
+                                }
+                            }
+                        }
+                        if (config.catLove?.images && Array.isArray(config.catLove.images)) {
+                            for (let i=0;i<config.catLove.images.length;i++) {
+                                const src = config.catLove.images[i];
+                                if (src && typeof src === 'string' && src.startsWith('data:')) {
+                                    config.catLove.images[i] = await compressDataUrl(src, 360, 432, 0.8);
+                                }
+                            }
+                        }
+                    };
+                    await shrink();
+                    dataStr = JSON.stringify(config);
+                    localStorage.setItem('fortuneWheelConfig', dataStr);
+                }
+                
+                console.log('💾 Saved configuration:', config);
+                showSuccess('✅ Changes saved successfully! Your app will use the new bilingual content.');
+                
+                // Clear unsaved changes flag
+                window.hasUnsavedChanges = false;
+            } catch (error) {
+                showError('❌ Error saving changes: ' + error.message);
+            }
+        }
+
+        // Show messages
+        function showSuccess(message) {
+            const element = document.getElementById('successMessage');
+            element.textContent = message;
+            element.style.display = 'block';
+            document.getElementById('errorMessage').style.display = 'none';
+            setTimeout(() => element.style.display = 'none', 5000);
+        }
+
+        function showError(message) {
+            const element = document.getElementById('errorMessage');
+            element.textContent = message;
+            element.style.display = 'block';
+            document.getElementById('successMessage').style.display = 'none';
+            setTimeout(() => element.style.display = 'none', 5000);
+        }
+
+        // Auto-save to localStorage whenever changes are made
+        async function autoSaveToLocalStorage() {
+            try {
+                // Lightweight auto-save; if it fails, skip compression to avoid lag, but show a tip
+                try {
+                    localStorage.setItem('fortuneWheelConfig', JSON.stringify(config));
+                } catch (e) {
+                    console.warn('⚠️ Auto-save quota exceeded; will compress on manual Save.');
+                }
+                console.log('💾 Auto-saved changes to localStorage');
+                
+                // Show a subtle success indicator
+                const successMsg = document.getElementById('successMessage');
+                if (successMsg) {
+                    successMsg.textContent = '💾 自動保存中...';
+                    successMsg.style.display = 'block';
+                    successMsg.style.background = '#d1ecf1';
+                    successMsg.style.color = '#0c5460';
+                    successMsg.style.border = '1px solid #bee5eb';
+                    setTimeout(() => {
+                        successMsg.style.display = 'none';
+                    }, 1500);
+                }
+                
+                // Mark that we have unsaved changes
+                window.hasUnsavedChanges = true;
+            } catch (error) {
+                console.error('❌ Error auto-saving to localStorage:', error);
+            }
+        }
+
+        // Warn user before leaving page if there are unsaved changes
+        window.addEventListener('beforeunload', (e) => {
+            if (window.hasUnsavedChanges) {
+                e.preventDefault();
+                e.returnValue = '您有未保存的變更，確定要離開嗎？';
+                return '您有未保存的變更，確定要離開嗎？';
+            }
+        });
+
+        // Popular Options now handled in individual segments
+
+        // Save current admin data to config.json
+        async function exportCurrentConfig() {
+            try {
+                console.log('💾 正在下載當前設定...');
+                
+                // Get the current config from localStorage
+                const currentConfig = JSON.parse(localStorage.getItem('fortuneWheelConfig') || '{}');
+                
+                if (!currentConfig.languages) {
+                    alert('❌ 找不到有效的設定資料');
+                    return;
+                }
+                
+                // Create backup with timestamp
+                const timestamp = new Date().toISOString().replace(/[:.]/g, '-').substring(0, 19);
+                const backupFilename = `config-backup-${timestamp}.json`;
+                
+                // Download current config as backup
+                const dataStr = JSON.stringify(currentConfig, null, 2);
+                const dataBlob = new Blob([dataStr], {type: 'application/json'});
+                const url = URL.createObjectURL(dataBlob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = backupFilename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+                
+                alert(`✅ 設定已下載！\n\n已下載備份檔案: ${backupFilename}\n\n請將此檔案覆蓋到 simple-admin/config.json 來永久保存你的設定`);
+                
+            } catch (error) {
+                console.error('下載設定時出錯:', error);
+                alert('❌ 下載設定時出錯: ' + error.message);
+            }
+        }
+
+        // Import config.json manually to avoid CORS when using file://
+        async function handleConfigImport(event) {
+            try {
+                const file = event.target.files?.[0];
+                if (!file) return;
+                const text = await file.text();
+                const imported = JSON.parse(text);
+                if (!imported.languages) throw new Error('Invalid config format');
+                localStorage.setItem('fortuneWheelConfig', JSON.stringify(imported));
+                config = imported;
+                showSuccess('✅ 匯入完成！設定已載入並保存到瀏覽器。請向上滾動檢視。');
+                // Re-populate UI
+                populateFormFields('en');
+                populateFormFields('zh_hk');
+                populateSegments('unified');
+                updateAllCounters();
+            } catch (e) {
+                console.error('❌ 匯入設定失敗:', e);
+                showError('❌ 匯入設定失敗：' + (e?.message || e));
+            } finally {
+                event.target.value = '';
+            }
+        }
+
+        function updateSegmentPopularOptions(lang, index, field, value) {
+            console.log(`🌟 Updating popular options: lang=${lang}, index=${index}, field=${field}, value=${value}`);
+            
+            if (!config.languages[lang]) {
+                config.languages[lang] = {};
+            }
+            if (!config.languages[lang].wheelSegments) {
+                config.languages[lang].wheelSegments = [];
+            }
+            if (!config.languages[lang].wheelSegments[index]) {
+                config.languages[lang].wheelSegments[index] = {};
+            }
+            if (!config.languages[lang].wheelSegments[index].popularOptions) {
+                config.languages[lang].wheelSegments[index].popularOptions = {};
+            }
+            
+            config.languages[lang].wheelSegments[index].popularOptions[field] = value;
+            console.log(`✅ Updated popular options:`, config.languages[lang].wheelSegments[index].popularOptions);
+            
+            // Auto-save to localStorage after each change
+            try {
+                localStorage.setItem('fortuneWheelConfig', JSON.stringify(config));
+                console.log('💾 Auto-saved popular options change to localStorage');
+            } catch (error) {
+                console.error('❌ Error auto-saving popular options change:', error);
+            }
+        }
+
+        function toggleAllPopularOptions(lang, enabled) {
+            if (lang === 'unified') {
+                console.log(`🌟 ${enabled ? 'Enabling' : 'Disabling'} popular options for all cuisines in both languages`);
+                ['en', 'zh_hk'].forEach(l => {
+                    if (config.languages[l].wheelSegments) {
+                        config.languages[l].wheelSegments.forEach((segment, index) => {
+                            if (!segment.popularOptions) {
+                                segment.popularOptions = {
+                                    enabled: false,
+                                    title: '',
+                                    suggestions: []
+                                };
+                            }
+                            segment.popularOptions.enabled = enabled;
+                        });
+                    }
+                });
+                populateSegments('unified'); // Refresh the segments display
+                console.log(`✅ Updated segments in both languages`);
+            } else {
+                console.log(`🌟 ${enabled ? 'Enabling' : 'Disabling'} popular options for all ${lang} cuisines`);
+                
+                // Update all segments
+                if (config.languages[lang].wheelSegments) {
+                    config.languages[lang].wheelSegments.forEach((segment, index) => {
+                        if (!segment.popularOptions) {
+                            segment.popularOptions = {
+                                enabled: false,
+                                title: '',
+                                suggestions: []
+                            };
+                        }
+                        segment.popularOptions.enabled = enabled;
+                        
+                        // Update visibility of fields
+                        const fieldsDiv = document.getElementById(`popularFields_${lang}_${index}`);
+                        if (fieldsDiv) {
+                            fieldsDiv.style.display = enabled ? 'block' : 'none';
+                        }
+                    });
+                    
+                    // Refresh the segments display to show updated state
+                    populateSegments(lang);
+                }
+                
+                console.log(`✅ Updated ${config.languages[lang].wheelSegments?.length || 0} segments`);
+            }
+        }
+
+        // Clear localStorage to force fresh load from config.json
+        function clearStorageAndReload() {
+            localStorage.removeItem('fortuneWheelConfig');
+            location.reload();
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async () => {
+            
+            // Check if we're running from file:// protocol and show CORS warning
+            if (window.location.protocol === 'file:') {
+                const corsWarning = document.getElementById('corsWarning');
+                if (corsWarning) {
+                    corsWarning.style.display = 'block';
+                }
+                console.log('⚠️ Running from local file system - CORS restrictions may apply');
+            }
+            
+            await loadConfig();
+            setupCharacterCounters();
+            
+            // Set up character image upload listener
+            const characterUpload = document.getElementById('characterUpload');
+            if (characterUpload) {
+                characterUpload.addEventListener('change', handleCharacterImageUpload);
+            }
+            
+            // Set up Cat Love image upload listeners (3 slots)
+            ['1','2','3'].forEach(n => {
+                const input = document.getElementById(`catLoveUpload${n}`);
+                if (input) input.addEventListener('change', handleCatLoveImageUpload);
+            });
+
+            // Populate Cat Love previews from config/localStorage (migrate legacy field)
+            try {
+                if (!config.catLove) config.catLove = {};
+                if (config.catLove.imagePath) {
+                    // migrate legacy single field into images[0]
+                    if (!Array.isArray(config.catLove.images)) config.catLove.images = [null, null, null];
+                    if (!config.catLove.images[0]) config.catLove.images[0] = config.catLove.imagePath;
+                }
+                if (!Array.isArray(config.catLove.images)) config.catLove.images = [null, null, null];
+                config.catLove.images.forEach((src, i) => {
+                    const preview = document.getElementById(`catLovePreview${i+1}`);
+                    const placeholder = document.getElementById(`catLovePlaceholder${i+1}`);
+                    if (src && preview && placeholder) {
+                        preview.src = src;
+                        preview.style.display = 'block';
+                        placeholder.style.display = 'none';
+                    }
+                });
+            } catch (e) {
+                console.log('⚠️ Unable to populate Cat Love previews:', e);
+            }
+        });
+    </script>
+</body>
+</html>

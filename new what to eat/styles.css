@@ -1,0 +1,1277 @@
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: #ffffff;
+    min-height: 100vh;
+    color: #333;
+    overflow-x: hidden;
+}
+
+/* Loading Overlay Styles */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.loading-overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.loading-content {
+    text-align: center;
+    color: white;
+}
+
+.loading-spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+.loading-content p {
+    font-size: 18px;
+    font-weight: 500;
+    margin: 0;
+    opacity: 0.9;
+}
+
+.manual-load-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-size: 14px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: all 0.3s ease;
+}
+
+.manual-load-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.8);
+    transform: translateY(-2px);
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes slideDown {
+    0% {
+        transform: translateX(-50%) translateY(-100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
+}
+
+/* App Container Styles */
+.app-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    transition: opacity 0.5s ease;
+}
+
+.app-container.loaded {
+    opacity: 1 !important;
+}
+
+/* Header Styles */
+.header {
+    padding: 40px 0 20px;
+    text-align: center;
+    position: relative;
+}
+
+.header-content {
+    background: rgba(248, 250, 252, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 30px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(226, 232, 240, 0.5);
+}
+
+/* Language Toggle */
+.language-toggle {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    z-index: 10;
+}
+
+.lang-btn {
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid rgba(102, 126, 234, 0.3);
+    color: #667eea;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.lang-btn:hover {
+    background: rgba(102, 126, 234, 0.1);
+    border-color: rgba(102, 126, 234, 0.5);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.lang-btn:active {
+    transform: translateY(0);
+}
+
+.app-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 700;
+    background: linear-gradient(135deg, #FF6B9D, #FFD93D, #6BCF7F);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 10px;
+}
+
+.app-subtitle {
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    color: #666;
+    font-weight: 400;
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    padding: 40px 0;
+}
+
+/* Fortune Section */
+.fortune-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+/* Character Container */
+.character-container {
+    position: absolute;
+    right: -100px;
+    top: calc(50% + 100px);
+    transform: translateY(-50%);
+    z-index: 15;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.character-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.character-image {
+    width: 180px;
+    height: 216px;
+    object-fit: contain;
+    filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.3));
+    animation: characterFloat 3s ease-in-out infinite;
+    position: relative;
+    z-index: 5;
+}
+
+.character-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 25%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 6px;
+    background: linear-gradient(90deg, transparent 15%, #2c3e50 25%, #2c3e50 35%, transparent 45%, transparent 55%, #2c3e50 65%, #2c3e50 75%, transparent 85%);
+    opacity: 0;
+    border-radius: 50px;
+    z-index: 10;
+    pointer-events: none;
+
+}
+
+
+
+.character-speech-bubble {
+    background: rgba(248, 250, 252, 0.98);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    padding: 16px 20px;
+    max-width: 240px;
+    text-align: center;
+    border: 1px solid rgba(226, 232, 240, 0.6);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    position: relative;
+}
+
+.character-speech-bubble::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid rgba(255, 255, 255, 0.95);
+}
+
+.character-speech-bubble p {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.4;
+    margin: 0;
+}
+
+/* Magic Stars Effect */
+.magic-stars {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    height: 300px;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.magic-stars.active {
+    opacity: 1;
+}
+
+.star {
+    position: absolute;
+    font-size: 20px;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5) translateZ(0);
+    animation-fill-mode: forwards;
+    pointer-events: none;
+}
+
+.magic-stars.active .star {
+    animation: starFly 2s ease-out forwards;
+}
+
+.star-1 {
+    top: 50%;
+    left: 50%;
+    animation-delay: 0s;
+}
+
+.star-2 {
+    top: 30%;
+    left: 70%;
+    animation-delay: 0.1s;
+}
+
+.star-3 {
+    top: 70%;
+    left: 30%;
+    animation-delay: 0.2s;
+}
+
+.star-4 {
+    top: 20%;
+    left: 50%;
+    animation-delay: 0.15s;
+}
+
+.star-5 {
+    top: 80%;
+    left: 60%;
+    animation-delay: 0.25s;
+}
+
+.star-6 {
+    top: 40%;
+    left: 20%;
+    animation-delay: 0.3s;
+}
+
+.star-7 {
+    top: 60%;
+    left: 80%;
+    animation-delay: 0.05s;
+}
+
+.star-8 {
+    top: 10%;
+    left: 40%;
+    animation-delay: 0.35s;
+}
+
+@keyframes starFly {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.2) translateZ(0) rotate(0deg);
+    }
+    20% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(0.8) translateZ(50px) rotate(180deg);
+    }
+    40% {
+        opacity: 0.9;
+        transform: translate(-50%, -50%) scale(1.2) translateZ(100px) rotate(360deg);
+    }
+    60% {
+        opacity: 0.7;
+        transform: translate(-50%, -50%) scale(1.5) translateZ(150px) rotate(540deg);
+    }
+    80% {
+        opacity: 0.4;
+        transform: translate(-50%, -50%) scale(2) translateZ(200px) rotate(720deg);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(3) translateZ(300px) rotate(900deg);
+    }
+}
+
+/* Wheel Container */
+.wheel-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    z-index: 10;
+}
+
+.wheel-wrapper {
+    position: relative;
+    background: rgba(248, 250, 252, 0.98);
+    backdrop-filter: blur(20px);
+    border-radius: 50%;
+    padding: 3px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(226, 232, 240, 0.6);
+    overflow: visible;
+}
+
+#wheelCanvas {
+    display: block;
+    border-radius: 50%;
+}
+
+.wheel-pointer {
+    position: absolute;
+    top: 0px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-top: 25px solid #475569;
+    z-index: 10;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+.spin-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FF6B9D, #FFD93D);
+    border: none;
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 24px rgba(255, 107, 157, 0.4);
+    transition: all 0.3s ease;
+    z-index: 5;
+    border: 3px solid white;
+}
+
+.spin-button:hover {
+    transform: translate(-50%, -50%) scale(1.05);
+    box-shadow: 0 12px 32px rgba(255, 107, 157, 0.5);
+}
+
+.spin-button:active {
+    transform: translate(-50%, -50%) scale(0.95);
+}
+
+.spin-button.spinning {
+    pointer-events: none;
+    opacity: 0.8;
+}
+
+.spin-text {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: center;
+    line-height: 1.2;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.action-btn {
+    padding: 16px 32px;
+    border-radius: 16px;
+    border: none;
+    font-weight: 500;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.action-btn.secondary {
+    background: rgba(248, 250, 252, 0.95);
+    color: #333;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.action-btn.tertiary {
+    background: rgba(248, 250, 252, 0.6);
+    color: #475569;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+}
+
+/* Popup Styles */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+/* Bookmark Instructions Popup */
+.bookmark-popup .popup-content {
+    max-width: 600px;
+    width: 95%;
+}
+
+.bookmark-instructions {
+    padding: 0;
+}
+
+.instruction-step {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    border-left: 4px solid #667eea;
+}
+
+.step-number {
+    background: #667eea;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 16px;
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+.step-content {
+    flex: 1;
+    line-height: 1.5;
+}
+
+.step-content strong {
+    color: #333;
+    font-weight: 600;
+}
+
+.share-icon {
+    background: #007AFF;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 14px;
+    margin: 0 4px;
+}
+
+.instruction-note {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
+    font-weight: 500;
+    margin-top: 10px;
+}
+
+@media (max-width: 768px) {
+    /* Share popup: mobile responsive */
+    .share-modal-content {
+        max-width: 95vw;
+        width: 95vw;
+        max-height: 90vh;
+    }
+
+    .share-modal-body {
+        padding: 20px;
+        padding-bottom: calc(20px + env(safe-area-inset-bottom));
+    }
+
+    .share-modal-content h3 {
+        font-size: 20px;
+        margin-bottom: 12px;
+    }
+
+    .share-modal-content p {
+        font-size: 14px;
+        margin-bottom: 18px;
+    }
+
+    .share-buttons {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        margin-bottom: 18px;
+    }
+
+    .share-btn {
+        padding: 14px 18px;
+        font-size: 16px;
+        border-radius: 10px;
+    }
+
+    .close-share-btn {
+        padding: 12px 18px;
+        font-size: 14px;
+        border-radius: 10px;
+    }
+    .bookmark-popup .popup-content {
+        margin: 20px;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+    
+    .instruction-step {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .step-number {
+        margin: 0 auto 10px auto;
+    }
+}
+
+.popup-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.popup-content {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    transform: scale(0.8) translateY(40px);
+    transition: all 0.3s ease;
+}
+
+/* Ensure share popup content can scroll even if inline styles set overflow hidden */
+.popup-content.share-popup-content {
+    max-height: 90vh;
+    max-height: 90dvh;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+}
+
+.popup-overlay.show .popup-content {
+    transform: scale(1) translateY(0);
+}
+
+.popup-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.popup-header h2 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.result-cuisine {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.result-cuisine-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin-bottom: 30px;
+}
+
+.chef-cat-character {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chef-cat-image {
+    width: 200px;
+    height: 240px;
+    object-fit: contain;
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 768px) {
+    .result-cuisine-display {
+        gap: 0;
+        margin-bottom: 20px;
+        flex-direction: column;
+    }
+    
+    .chef-cat-image {
+        width: 150px;
+        height: 180px;
+    }
+    
+    .cuisine-icon {
+        font-size: 180px;
+        width: 150px;
+        height: 180px;
+    }
+}
+
+/* Force cuisine icon size with specific selectors */
+#resultIcon.cuisine-icon,
+.result-cuisine .cuisine-icon,
+.popup-content .cuisine-icon {
+    font-size: 180px !important;
+    width: 180px !important;
+    height: 180px !important;
+    min-width: 180px !important;
+    min-height: 180px !important;
+    max-width: 180px !important;
+    max-height: 180px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin-bottom: 0 !important;
+    line-height: 1 !important;
+}
+
+.cuisine-icon {
+    font-size: 180px !important;
+    margin-bottom: 0;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 180px !important;
+    height: 180px !important;
+    min-width: 180px !important;
+    min-height: 180px !important;
+    max-width: 180px !important;
+    max-height: 180px !important;
+}
+
+.result-cuisine h3 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.result-cuisine p {
+    font-size: 16px;
+    color: #666;
+    line-height: 1.5;
+}
+
+.result-suggestions h4 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 16px;
+}
+
+.suggestions-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+    margin-bottom: 30px;
+}
+
+.suggestion-item {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 12px;
+    text-align: center;
+    font-size: 14px;
+    color: #555;
+    border: 1px solid #e9ecef;
+}
+
+.popup-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.popup-btn {
+    padding: 16px 24px;
+    border-radius: 12px;
+    border: none;
+    font-weight: 500;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.popup-btn.primary {
+    background: linear-gradient(135deg, #FF6B9D, #6BCF7F);
+    color: white;
+    box-shadow: 0 4px 16px rgba(255, 107, 157, 0.3);
+}
+
+.popup-btn.secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.popup-btn.tertiary {
+    background: #f8f9fa;
+    color: #6c757d;
+    border: 1px solid #dee2e6;
+}
+
+.popup-btn.share {
+    background: linear-gradient(135deg, #25D366, #128C7E);
+    color: white;
+    box-shadow: 0 4px 16px rgba(37, 211, 102, 0.3);
+}
+
+.popup-btn.share:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+}
+
+.popup-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    padding: 30px 0;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
+}
+
+/* Animations */
+@keyframes characterFloat {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-10px) scale(1.02); }
+}
+
+@keyframes characterExcited {
+    0%, 100% { transform: translateY(0) scale(1); }
+    25% { transform: translateY(-5px) scale(1.05) rotate(-2deg); }
+    75% { transform: translateY(-15px) scale(1.05) rotate(2deg); }
+}
+
+@keyframes characterConcentrating {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-5px) scale(0.98); }
+}
+
+@keyframes characterHappy {
+    0%, 100% { transform: translateY(0) scale(1); }
+    25% { transform: translateY(-8px) scale(1.08) rotate(-3deg); }
+    75% { transform: translateY(-12px) scale(1.08) rotate(3deg); }
+}
+
+@keyframes wheelSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(1800deg); }
+}
+
+.wheel-spinning {
+    animation: wheelSpin 3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .fortune-section {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .character-container {
+        position: relative;
+        left: 0;
+        top: 50px;
+        transform: none;
+        order: -1;
+        margin-bottom: 10px;
+    }
+    
+    .character-image {
+        width: 140px;
+        height: 168px;
+    }
+    
+    .character-speech-bubble {
+        max-width: 200px;
+        padding: 12px 16px;
+    }
+    
+    .wheel-wrapper {
+        padding: 2px;
+    }
+    
+    #wheelCanvas {
+        width: 300px;
+        height: 300px;
+    }
+    
+    .spin-button {
+        width: 100px;
+        height: 100px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 768px) {
+    .app-container {
+        padding: 0 15px;
+    }
+    
+    .header {
+        padding: 20px 0 15px;
+    }
+    
+    .header-content {
+        padding: 20px;
+        border-radius: 20px;
+    }
+    
+    .main-content {
+        padding: 20px 0;
+    }
+    
+    .character-image {
+        width: 110px;
+        height: 132px;
+    }
+    
+    .character-speech-bubble {
+        max-width: 180px;
+        padding: 10px 14px;
+        font-size: 12px;
+    }
+    
+    #wheelCanvas {
+        width: 280px;
+        height: 280px;
+    }
+    
+    .spin-button {
+        width: 90px;
+        height: 90px;
+        font-size: 11px;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .action-btn {
+        width: 100%;
+        max-width: 280px;
+        padding: 14px 24px;
+        font-size: 14px;
+    }
+    
+    .popup-content {
+        padding: 30px 20px;
+        border-radius: 20px;
+    }
+    
+    .popup-actions {
+        gap: 10px;
+    }
+    
+    .popup-btn {
+        padding: 14px 20px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .character-image {
+        width: 90px;
+        height: 108px;
+    }
+    
+    .character-speech-bubble {
+        max-width: 160px;
+        padding: 8px 12px;
+        font-size: 11px;
+    }
+    
+    #wheelCanvas {
+        width: 250px;
+        height: 250px;
+    }
+    
+    .spin-button {
+        width: 80px;
+        height: 80px;
+        font-size: 10px;
+    }
+    
+
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .character-speech-bubble,
+    .wheel-wrapper,
+    .action-btn {
+        border: 2px solid #000;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .character-image,
+    .wheel-spinning,
+    .popup-content,
+    .popup-overlay {
+        animation: none;
+        transition: none;
+    }
+}
+
+/* Most specific rule to force cuisine icon size */
+body .popup-overlay .popup-content .popup-body .result-cuisine .result-cuisine-display #resultIcon.cuisine-icon,
+body .popup-overlay .popup-content .popup-body .result-cuisine .result-cuisine-display .cuisine-icon,
+body .popup-overlay .popup-content .popup-body .result-cuisine .cuisine-icon,
+body .popup-overlay .popup-content .cuisine-icon,
+body .popup-overlay .cuisine-icon,
+body .cuisine-icon {
+    font-size: 180px !important;
+    width: 180px !important;
+    height: 180px !important;
+    min-width: 180px !important;
+    min-height: 180px !important;
+    max-width: 180px !important;
+    max-height: 180px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin-bottom: 0 !important;
+    line-height: 1 !important;
+    box-sizing: border-box !important;
+}
+
+/* Share Modal Styles */
+.share-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    overflow: hidden; /* overlay does not scroll; child will */
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable both-edges;
+    z-index: 10000;
+    animation: fadeIn 0.3s ease;
+}
+
+.share-modal-content {
+    display: flex;
+    flex-direction: column;
+    background: white;
+    border-radius: 20px;
+    max-width: 90vw;
+    width: 90%;
+    max-height: 90vh;
+    max-height: 90dvh;
+    overflow: hidden; /* inner body will scroll */
+    min-height: 0; /* ensure child can scroll in flex */
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.3s ease;
+}
+
+/* Scrollable body inside the share modal */
+.share-modal-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable both-edges;
+    padding: 30px;
+    padding-bottom: calc(30px + env(safe-area-inset-bottom));
+}
+
+.share-modal-content h3 {
+    color: #333;
+    margin-bottom: 15px;
+    font-size: 24px;
+}
+
+.share-modal-content p {
+    color: #666;
+    margin-bottom: 25px;
+    font-size: 16px;
+}
+
+.share-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.share-btn {
+    padding: 15px 20px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: white;
+}
+
+.share-btn.whatsapp {
+    background: #25D366;
+}
+
+.share-btn.facebook {
+    background: #1877F2;
+}
+
+.share-btn.instagram {
+    background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+}
+
+.share-btn.download {
+    background: #6c757d;
+}
+
+.share-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.close-share-btn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.close-share-btn:hover {
+    background: #c82333;
+    transform: translateY(-1px);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { 
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Share Preview Modal Styles */
+.share-preview-modal .share-modal-content {
+    max-width: 500px;
+    max-height: 90vh;
+    max-height: 90dvh;
+    overflow: hidden; /* body will scroll */
+}
+
+/* Ensure preview modal body scrolls within viewport */
+.share-preview-modal .share-modal-body {
+    max-height: 90vh;
+    max-height: 90dvh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+}
+
+.share-preview-image {
+    margin: 20px 0;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+}
+
+.share-preview-image img {
+    max-width: 100%;
+    max-height: 400px;
+    width: auto;
+    height: auto;
+    border-radius: 15px;
+    display: block;
+}
+
+.share-preview-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin: 25px 0;
+}
+
+.share-preview-actions .share-btn {
+    padding: 12px 16px;
+    font-size: 14px;
+    border-radius: 10px;
+}
+
+.share-btn.share {
+    background: #28a745;
+}
+
+.share-btn.social {
+    background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+}
+
+/* Mobile responsive for preview */
+@media (max-width: 768px) {
+    .share-modal {
+        align-items: flex-start;
+    }
+    
+    .share-preview-modal .share-modal-content {
+        max-width: 95%;
+        padding: 20px;
+    }
+    
+    .share-preview-actions {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    .share-preview-actions .share-btn {
+        padding: 15px 20px;
+        font-size: 16px;
+    }
+    
+    .share-preview-image {
+        min-height: 150px;
+    }
+    
+    .share-preview-image img {
+        max-height: 300px;
+    }
+}

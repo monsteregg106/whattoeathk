@@ -1,0 +1,133 @@
+{
+  "currentLanguage": "en",
+  "languages": {
+    "en": {
+      "header": {
+        "title": "🍽️ What to Eat Tonight?",
+        "subtitle": "Let the magic decide your next delicious meal"
+      },
+      "wheelSegments": [
+        {
+          "name": "Italian",
+          "icon": "🍕",
+          "color": "#FF6B9D",
+          "description": "Time for some delicious pasta, pizza, or risotto!",
+          "imageUrl": null
+        },
+        {
+          "name": "Chinese",
+          "icon": "🥢",
+          "color": "#6BCF7F",
+          "description": "Enjoy authentic flavors from the Middle Kingdom!",
+          "imageUrl": null
+        },
+        {
+          "name": "Mexican",
+          "icon": "🌮",
+          "color": "#FFD93D",
+          "description": "Spice up your night with vibrant Mexican cuisine!",
+          "imageUrl": null
+        },
+        {
+          "name": "Japanese",
+          "icon": "🍣",
+          "color": "#4D7EA8",
+          "description": "Experience the art of Japanese culinary perfection!",
+          "imageUrl": null
+        },
+        {
+          "name": "Indian",
+          "icon": "🍛",
+          "color": "#2D2A87",
+          "description": "Indulge in rich spices and aromatic curries!",
+          "imageUrl": null
+        },
+        {
+          "name": "American",
+          "icon": "🍔",
+          "color": "#FF6B9D",
+          "description": "Classic comfort food to satisfy your cravings!",
+          "imageUrl": null
+        }
+      ],
+      "buttons": {
+        "spinButton": "PRESS TO SPIN",
+        "feelingLucky": "📖 Bookmark This",
+        "resetWheel": "🔄 Reset Wheel"
+      },
+      "popup": {
+        "title": "Your Culinary Destiny Awaits!",
+        "icon": "🎉",
+        "findRestaurants": "📍 Find Restaurants",
+        "spinAgain": "🎯 Spin Again",
+        "closeButton": "✖️ Close"
+      }
+    },
+    "zh_hk": {
+      "header": {
+        "title": "🍽️ 今晚食咩好？",
+        "subtitle": "讓命運決定你嘅下一餐美食"
+      },
+      "wheelSegments": [
+        {
+          "name": "意大利菜",
+          "icon": "🍕",
+          "color": "#FF6B9D",
+          "description": "品嚐美味嘅意粉、薄餅或者意式燴飯！",
+          "imageUrl": null
+        },
+        {
+          "name": "中菜",
+          "icon": "🥢",
+          "color": "#6BCF7F",
+          "description": "享受正宗嘅中華美食風味！",
+          "imageUrl": null
+        },
+        {
+          "name": "墨西哥菜",
+          "icon": "🌮",
+          "color": "#FFD93D",
+          "description": "用充滿活力嘅墨西哥菜為你嘅夜晚增添色彩！",
+          "imageUrl": null
+        },
+        {
+          "name": "日本菜",
+          "icon": "🍣",
+          "color": "#4D7EA8",
+          "description": "體驗日本料理嘅精湛藝術！",
+          "imageUrl": null
+        },
+        {
+          "name": "印度菜",
+          "icon": "🍛",
+          "color": "#2D2A87",
+          "description": "沉醉於豐富嘅香料同芳香嘅咖喱！",
+          "imageUrl": null
+        },
+        {
+          "name": "美式菜",
+          "icon": "🍔",
+          "color": "#FF6B9D",
+          "description": "經典嘅comfort food滿足你嘅渴望！",
+          "imageUrl": null
+        }
+      ],
+      "buttons": {
+        "spinButton": "按此轉盤",
+        "feelingLucky": "📖 加入書籤",
+        "resetWheel": "🔄 重設轉盤"
+      },
+      "popup": {
+        "title": "你嘅美食命運等緊你！",
+        "icon": "🎉",
+        "findRestaurants": "📍 搵附近餐廳",
+        "spinAgain": "🎯 再轉一次",
+        "closeButton": "✖️ 關閉"
+      }
+    }
+  },
+  "character": {
+    "imagePath": "Cat.png",
+    "enabled": true
+  }
+}

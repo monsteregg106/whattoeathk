@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Sitemap: https://whattoeathk.com/sitemap.xml
+
+
