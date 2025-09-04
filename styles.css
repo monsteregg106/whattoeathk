@@ -961,7 +961,7 @@ html, body {
         /* Bring cat closer to wheel and overlap slightly */
         .character-container {
             position: absolute;
-            left: -15px; /* move 20px further left from previous position */
+            left: -35px; /* moved further left per request */
             bottom: 10px;
             top: auto;
             right: auto;
