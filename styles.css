@@ -955,10 +955,13 @@ html, body {
         .fortune-section {
             margin-bottom: 10px;
         }
+        .wheel-container {
+            transform: translateX(10px);
+        }
         /* Bring cat closer to wheel and overlap slightly */
         .character-container {
             position: absolute;
-            left: 5px; /* 5px more to the left */
+            left: -15px; /* move 20px further left from previous position */
             bottom: 10px;
             top: auto;
             right: auto;
