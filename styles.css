@@ -12,6 +12,9 @@ body {
     color: #333;
     overflow-x: hidden;
 }
+html, body {
+    -webkit-text-size-adjust: 100%;
+}
 
 /* Loading Overlay Styles */
 .loading-overlay {
@@ -698,6 +701,7 @@ body {
     width: 200px;
     height: 240px;
     object-fit: contain;
+    display: block;
 }
 
 /* Responsive adjustments for mobile */
@@ -706,6 +710,7 @@ body {
         gap: 0;
         margin-bottom: 20px;
         flex-direction: column;
+        row-gap: 8px;
     }
     
     .chef-cat-image {
@@ -717,6 +722,12 @@ body {
         font-size: 180px;
         width: 150px;
         height: 180px;
+    }
+    .cuisine-icon img {
+        width: 150px;
+        height: 180px;
+        object-fit: contain;
+        display: block;
     }
 }
 
@@ -751,6 +762,12 @@ body {
     min-height: 180px !important;
     max-width: 180px !important;
     max-height: 180px !important;
+}
+.cuisine-icon img {
+    width: 180px;
+    height: 180px;
+    object-fit: contain;
+    display: block;
 }
 
 .result-cuisine h3 {
