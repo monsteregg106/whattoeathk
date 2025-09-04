@@ -931,8 +931,8 @@ html, body {
     }
     
     #wheelCanvas {
-        width: 300px;
-        height: 300px;
+        width: 420px;
+        height: 420px;
     }
     
     .spin-button {
@@ -961,9 +961,11 @@ html, body {
         /* Bring cat closer to wheel and overlap slightly */
         .character-container {
             position: absolute;
-            right: 0;
-            top: 55%;
-            transform: translateY(-50%);
+            left: 10px; /* move towards left bottom of the wheel */
+            bottom: 10px;
+            top: auto;
+            right: auto;
+            transform: none;
             z-index: 6; /* over wheel button but under pointer */
         }
         .character-image {
@@ -1001,8 +1003,8 @@ html, body {
     }
     
     #wheelCanvas {
-        width: 280px;
-        height: 280px;
+        width: 392px; /* +40% */
+        height: 392px;
     }
     
     .spin-button {
@@ -1060,8 +1062,8 @@ html, body {
     }
     
     #wheelCanvas {
-        width: 250px;
-        height: 250px;
+        width: 350px; /* +40% */
+        height: 350px;
     }
     
     .spin-button {

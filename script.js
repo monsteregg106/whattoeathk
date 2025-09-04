@@ -1147,7 +1147,7 @@ class FortuneWheel {
         const trySrc = preferred || 'Cat love.png';
         // Try multiple methods to load and convert the image
         this.loadImageAsBase64(trySrc, (dataURL) => {
-            if (dataURL) {
+            const useData = (val) => {
                 console.log('✅ Cat Love.png converted to base64 successfully');
                 
                 // Add image to SVG
@@ -1157,11 +1157,21 @@ class FortuneWheel {
                 imageElement.setAttribute('width', String(w));
                 imageElement.setAttribute('height', String(h));
                 // Set both modern and legacy href attributes for Safari compatibility
-                imageElement.setAttribute('href', dataURL);
-                imageElement.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', dataURL);
+                imageElement.setAttribute('href', val);
+                imageElement.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', val);
                 svg.appendChild(imageElement);
                 
                 callback();
+            };
+            if (dataURL) {
+                // If it's webp in data url, convert to png for Safari
+                if (typeof dataURL === 'string' && dataURL.startsWith('data:image/webp')) {
+                    this.convertWebPDataUrlToPng(dataURL, (pngUrl) => {
+                        useData(pngUrl || dataURL);
+                    });
+                } else {
+                    useData(dataURL);
+                }
             } else {
                 console.log('⚠️ Failed to convert Cat Love.png to base64, using emoji');
                 this.addCatLoveEmoji(svg, x, y, w, h, callback);
@@ -1257,6 +1267,12 @@ class FortuneWheel {
     
     // Try loading with crossOrigin
     tryLoadWithCrossOrigin(imageSrc, callback) {
+        // Data URLs should not use crossOrigin
+        if (typeof imageSrc === 'string' && imageSrc.startsWith('data:')) {
+            this.tryLoadWithoutCrossOrigin(imageSrc, callback);
+            return;
+        }
+
         const img = new Image();
         
         img.onload = () => {
@@ -1319,6 +1335,51 @@ class FortuneWheel {
                 console.log('⚠️ Fetch failed:', error.message);
                 this.tryLoadLocalFile(imageSrc, callback);
             });
+    }
+    
+    // Convert WebP data URL to PNG (Safari compatibility)
+    convertWebPDataUrlToPng(dataUrl, callback) {
+        try {
+            if (!dataUrl || typeof dataUrl !== 'string' || !dataUrl.startsWith('data:image/webp')) {
+                callback(null);
+                return;
+            }
+            fetch(dataUrl)
+                .then(res => res.blob())
+                .then(async blob => {
+                    try {
+                        if (window.createImageBitmap) {
+                            const bitmap = await createImageBitmap(blob);
+                            const canvas = document.createElement('canvas');
+                            canvas.width = bitmap.width;
+                            canvas.height = bitmap.height;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(bitmap, 0, 0);
+                            const out = canvas.toDataURL('image/png');
+                            callback(out);
+                        } else {
+                            const img = new Image();
+                            img.onload = () => {
+                                const canvas = document.createElement('canvas');
+                                canvas.width = img.width;
+                                canvas.height = img.height;
+                                const ctx = canvas.getContext('2d');
+                                ctx.drawImage(img, 0, 0);
+                                const out = canvas.toDataURL('image/png');
+                                callback(out);
+                            };
+                            img.onerror = () => callback(null);
+                            img.src = URL.createObjectURL(blob);
+                        }
+                    } catch (e) {
+                        console.log('⚠️ WebP→PNG convert failed:', e.message);
+                        callback(null);
+                    }
+                })
+                .catch(() => callback(null));
+        } catch (e) {
+            callback(null);
+        }
     }
     
     // Try loading local file with alternative methods
@@ -1489,7 +1550,7 @@ class FortuneWheel {
         if (cuisineImageSrc) {
             // Try to load and convert cuisine image
             this.loadImageAsBase64(cuisineImageSrc, (dataURL) => {
-                if (dataURL) {
+                const useData = (val) => {
                     console.log('✅ Cuisine image converted to base64 successfully');
                     
                     // Add image to SVG
@@ -1499,11 +1560,20 @@ class FortuneWheel {
                     imageElement.setAttribute('width', String(w));
                     imageElement.setAttribute('height', String(h));
                     // Set both modern and legacy href attributes for Safari compatibility
-                    imageElement.setAttribute('href', dataURL);
-                    imageElement.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', dataURL);
+                    imageElement.setAttribute('href', val);
+                    imageElement.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', val);
                     svg.appendChild(imageElement);
                     
                     callback();
+                };
+                if (dataURL) {
+                    if (typeof dataURL === 'string' && dataURL.startsWith('data:image/webp')) {
+                        this.convertWebPDataUrlToPng(dataURL, (pngUrl) => {
+                            useData(pngUrl || dataURL);
+                        });
+                    } else {
+                        useData(dataURL);
+                    }
                 } else {
                     console.log('⚠️ Failed to convert cuisine image to base64, using emoji');
                     this.addCuisineEmoji(svg, cuisineEmoji, x, y, w, h, callback);
