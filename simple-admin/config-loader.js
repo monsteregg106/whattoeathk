@@ -105,7 +105,23 @@ class SimpleConfigLoader {
 
     async loadConfig() {
         try {
-            // Prefer localStorage (most up-to-date from admin saves)
+            // Prefer server (most up-to-date across devices)
+            try {
+                const res = await fetch('/.netlify/functions/get-config', { headers: { 'Cache-Control': 'no-store' } });
+                if (res.ok) {
+                    const json = await res.json();
+                    if (json && json.languages) {
+                        this.config = json;
+                        try { localStorage.setItem('fortuneWheelConfig', JSON.stringify(json)); } catch (_) {}
+                        console.log('✅ Using configuration from server');
+                        return this.config;
+                    }
+                }
+            } catch (e) {
+                console.log('ℹ️ Server config unavailable, trying localStorage/file');
+            }
+
+            // Prefer localStorage (fallback)
             const savedConfig = localStorage.getItem('fortuneWheelConfig');
             if (savedConfig) {
                 try {

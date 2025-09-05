@@ -1007,11 +1007,27 @@
                         }
                     }
                 } catch (e) { console.warn('Hash payload ignored:', e); }
+                // 0.5) Prefer server (most up-to-date across devices)
+                try {
+                    const res = await fetch('/.netlify/functions/get-config', { headers: { 'Cache-Control': 'no-store' } });
+                    if (res.ok) {
+                        const json = await res.json();
+                        if (json && json.languages) {
+                            localStorage.setItem('fortuneWheelConfig', JSON.stringify(json));
+                            localStorage.setItem('fortuneWheelLastSaved', String(Date.now()));
+                            config = json;
+                            console.log('✅ Loaded configuration from server (preferred)');
+                            updateBadges('server');
+                        }
+                    }
+                } catch (e) {
+                    console.log('ℹ️ Server load skipped/failure; trying other sources');
+                }
                 // 1) Prefer localStorage (most up-to-date from admin saves)
                 const savedConfig = localStorage.getItem('fortuneWheelConfig');
-                if (savedConfig) {
+                if (!config && savedConfig) {
                     config = JSON.parse(savedConfig);
-                    console.log('✅ Loaded configuration from localStorage (preferred)');
+                    console.log('✅ Loaded configuration from localStorage');
                     try { localStorage.setItem('fortuneWheelLastSaved', String(Date.now())); } catch(_) {}
                     updateBadges('localStorage');
                     return;
