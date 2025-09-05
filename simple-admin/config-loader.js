@@ -522,17 +522,17 @@ class SimpleConfigLoader {
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('🚀 Initializing Simple Config Loader...');
     
-    // Ensure loading overlay is visible and app content is hidden
+    // Skip showing loading overlay; show app immediately
     const loadingOverlay = document.getElementById('loadingOverlay');
     const appContainer = document.querySelector('.app-container');
     
     if (loadingOverlay) {
-        loadingOverlay.style.display = 'flex';
-        loadingOverlay.style.opacity = '1';
+        loadingOverlay.style.opacity = '0';
+        loadingOverlay.style.display = 'none';
     }
     
     if (appContainer) {
-        appContainer.style.opacity = '0';
+        appContainer.style.opacity = '1';
     }
     
     try {
