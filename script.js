@@ -3982,7 +3982,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const shareBtn = document.getElementById('shareResult');
         if (spinText && langData.buttons?.spinButton) spinText.textContent = langData.buttons.spinButton;
         if (luckyBtn && langData.buttons?.feelingLucky) luckyBtn.textContent = langData.buttons.feelingLucky;
-        if (resetBtn && langData.buttons?.resetWheel) resetBtn.textContent = langData.buttons.resetWheel;
+        if (resetBtn) {
+            // Replace Reset with Share action
+            resetBtn.textContent = (currentLang === 'en') ? '🤝 Share Foodie Cat to friends' : '🤝 分享為食貓俾朋友';
+        }
         if (shareBtn && langData.buttons?.shareResult) shareBtn.textContent = langData.buttons.shareResult;
 
         // Popup labels
@@ -4095,13 +4098,36 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     
     // Track user interactions
-    document.getElementById('spinButton').addEventListener('click', () => {
-        trackEvent('Wheel Spin');
-    });
-    
-    document.getElementById('findRestaurants').addEventListener('click', () => {
-        trackEvent('Find Restaurants');
-    });
+    document.getElementById('spinButton').addEventListener('click', () => { trackEvent('Wheel Spin'); });
+    document.getElementById('findRestaurants').addEventListener('click', () => { trackEvent('Find Restaurants'); });
+    const shareHomeBtn = document.getElementById('resetWheel');
+    if (shareHomeBtn) {
+        shareHomeBtn.addEventListener('click', async () => {
+            const url = 'https://whattoeathk.com/';
+            const zh = "今日食乜好? 為食貓幫你解決選擇困難，隨機選擇菜式仲會推薦附近餐廳!\n快啲到 https://whattoeathk.com/ 玩下啦!";
+            const en = "What to eat today? Let 'Foodie Cat' solve your indecisiveness! Get a random cuisine suggestion and even recommendations for nearby restaurants!\n\nHead over to https://whattoeathk.com/ to try it out now!";
+            const currentLang = (window.appConfig?.currentLanguage) || 'en';
+            const text = currentLang === 'zh_hk' ? zh : en;
+
+            try {
+                if (navigator.share) {
+                    await navigator.share({ title: 'Foodie Cat - What to Eat?', text, url });
+                    return;
+                }
+            } catch (_) {}
+
+            // Fallbacks
+            const mailto = `mailto:?subject=${encodeURIComponent('Share: Foodie Cat')}&body=${encodeURIComponent(text)}`;
+            const whatsapp = `https://wa.me/?text=${encodeURIComponent(text)}`;
+            const fb = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}`;
+            const twitter = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+
+            // Prefer WhatsApp on mobile
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent || '');
+            const target = isMobile ? whatsapp : fb;
+            window.open(target, '_blank', 'noopener');
+        });
+    }
     
     // Easter egg removed in production build
     
