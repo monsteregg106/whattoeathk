@@ -555,7 +555,7 @@ class FortuneWheel {
     getAvailableCatLoveImages() {
         const images = [];
         try {
-            const cfg = window.configLoader?.config;
+            const cfg = window.appConfig;
             if (cfg?.catLove?.images && Array.isArray(cfg.catLove.images)) {
                 cfg.catLove.images.forEach(src => { if (src) images.push(src); });
             }
@@ -709,16 +709,15 @@ class FortuneWheel {
         // Get popup title from config
         let popupTitle = '🍽️ What to Eat Tonight?';
         try {
-            if (window.configLoader && window.configLoader.config) {
-                const currentLang = window.configLoader.config.currentLanguage || 'en';
-                const langConfig = window.configLoader.config.languages[currentLang];
+            const cfg = window.appConfig;
+            if (cfg && cfg.languages) {
+                const currentLang = cfg.currentLanguage || 'en';
+                const langConfig = cfg.languages[currentLang];
                 if (langConfig && langConfig.popup && langConfig.popup.title) {
                     popupTitle = langConfig.popup.title;
                 }
             }
-        } catch (e) {
-            console.log('⚠️ Could not get popup title from config, using default');
-        }
+        } catch (_) {}
         
         // Create the share popup with the same structure as result page
         const sharePopup = document.createElement('div');
@@ -1206,83 +1205,46 @@ class FortuneWheel {
     
     // Check if Cat Love image is available in config
     checkCatLoveImageAvailability() {
-        console.log('🔍 Checking Cat Love image availability...');
-        
         let hasUploadedImage = false;
-        
-        // Check window.configLoader.config
-        if (window.configLoader && window.configLoader.config && window.configLoader.config.catLove && window.configLoader.config.catLove.imagePath) {
-            hasUploadedImage = true;
-            console.log('✅ Cat Love image found in window.configLoader.config');
-        }
-        
-        // Check localStorage
-        if (!hasUploadedImage) {
-            try {
+        const cfg = window.appConfig;
+        try {
+            if (cfg?.catLove?.imagePath || (Array.isArray(cfg?.catLove?.images) && cfg.catLove.images.some(x => !!x))) {
+                hasUploadedImage = true;
+            }
+            if (!hasUploadedImage) {
                 const storedConfig = localStorage.getItem('fortuneWheelConfig');
                 if (storedConfig) {
-                    const config = JSON.parse(storedConfig);
-                    if (config.catLove && config.catLove.imagePath) {
+                    const parsed = JSON.parse(storedConfig);
+                    if (parsed?.catLove?.imagePath || (Array.isArray(parsed?.catLove?.images) && parsed.catLove.images.some(x => !!x))) {
                         hasUploadedImage = true;
-                        console.log('✅ Cat Love image found in localStorage config');
                     }
                 }
-            } catch (e) {
-                console.log('⚠️ Error checking localStorage:', e);
             }
-        }
-        
-        if (!hasUploadedImage) {
-            console.log('⚠️ No Cat Love image uploaded yet. Please upload via admin panel.');
-            console.log('💡 To upload: Go to simple-admin/admin.html → Cat Love Image section → Choose File');
-        }
-        
+        } catch (_) {}
         return hasUploadedImage;
     }
     
     // Load image as base64 using multiple methods
     loadImageAsBase64(imageSrc, callback) {
-        console.log('🔄 Loading image as base64:', imageSrc);
-        
         // Check if we have an uploaded Cat Love image in config
         if (imageSrc === 'Cat love.png') {
-            console.log('🔍 Checking for uploaded Cat Love image...');
-            console.log('🔍 window.configLoader:', window.configLoader);
-            console.log('🔍 window.configLoader.config:', window.configLoader?.config);
-            console.log('🔍 config.catLove:', window.configLoader?.config?.catLove);
-            console.log('🔍 config.catLove.imagePath:', window.configLoader?.config?.catLove?.imagePath);
-            
-            // Try multiple ways to access the config
             let catLoveImage = null;
-            
-            // Method 1: Check window.configLoader.config
-            if (window.configLoader && window.configLoader.config && window.configLoader.config.catLove && window.configLoader.config.catLove.imagePath) {
-                catLoveImage = window.configLoader.config.catLove.imagePath;
-                console.log('✅ Found Cat Love image in window.configLoader.config');
-            }
-            
-            // Method 2: Check localStorage directly
+            const cfg = window.appConfig;
+            if (cfg?.catLove?.imagePath) catLoveImage = cfg.catLove.imagePath;
+            if (!catLoveImage && Array.isArray(cfg?.catLove?.images)) catLoveImage = cfg.catLove.images.find(x => !!x) || null;
             if (!catLoveImage) {
                 try {
                     const storedConfig = localStorage.getItem('fortuneWheelConfig');
                     if (storedConfig) {
                         const config = JSON.parse(storedConfig);
-                        if (config.catLove && config.catLove.imagePath) {
-                            catLoveImage = config.catLove.imagePath;
-                            console.log('✅ Found Cat Love image in localStorage config');
-                        }
+                        if (config?.catLove?.imagePath) catLoveImage = config.catLove.imagePath;
+                        if (!catLoveImage && Array.isArray(config?.catLove?.images)) catLoveImage = config.catLove.images.find(x => !!x) || null;
                     }
-                } catch (e) {
-                    console.log('⚠️ Error reading localStorage config:', e);
-                }
+                } catch (_) {}
             }
-            
             if (catLoveImage) {
-                console.log('✅ Using uploaded Cat Love image:', catLoveImage.substring(0, 50) + '...');
                 callback(catLoveImage);
                 return;
-            } else {
-                console.log('⚠️ No uploaded Cat Love image found, trying local file...');
             }
         }
         
