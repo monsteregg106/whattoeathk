@@ -618,7 +618,12 @@
         
         <!-- Save Actions -->
         <div style="text-align: center; margin: 20px 0; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+            <div style="margin-bottom: 10px; display: flex; gap: 10px; justify-content: center; align-items: center; flex-wrap: wrap;">
+                <span id="dataSourceBadge" style="display:inline-block; padding:6px 10px; border-radius: 999px; background:#e9ecef; color:#495057; font-size:12px;">來源：檢查中…</span>
+                <span id="lastSavedBadge" style="display:inline-block; padding:6px 10px; border-radius: 999px; background:#e9ecef; color:#495057; font-size:12px;">最後保存：—</span>
+            </div>
             <button class="btn btn-primary" onclick="saveChanges()" style="margin-right: 10px;">💾 儲存變更 (自動保存)</button>
+            <button class="btn" onclick="forceSave()" style="margin-right: 10px; background:#6c5ce7; color:#fff;">🧷 強制保存到瀏覽器</button>
             <button class="btn btn-success" onclick="exportCurrentConfig()" style="margin-right: 10px;">📥 下載當前設定</button>
             <button class="btn btn-warning" onclick="clearStorageAndReload()">🔄 重新載入config.json</button>
             <button class="btn" onclick="document.getElementById('importConfigInput').click()" style="margin-left: 10px; background: #17a2b8;">📤 匯入設定 (從 config.json)</button>
@@ -630,8 +635,8 @@
                 • 重新載入（需要透過 http:// 伺服器）：清除暫存並從config.json重新載入；若以檔案開啟 (file://) 請使用「匯入設定」
             </div>
             <div style="margin-top: 15px; padding: 10px; background: #e7f3ff; border-radius: 6px; border-left: 4px solid #2196F3;">
-                <strong>🔄 即時更新：</strong> 所有變更會自動保存到瀏覽器暫存。<br>
-                在前端頁面按 F5 重新整理即可看到最新設定！
+                <strong>🔄 即時更新：</strong> 所有變更會自動保存到瀏覽器暫存 (localStorage)。<br>
+                來源與最後保存時間會顯示於上方徽章。
             </div>
             <div id="corsWarning" style="margin-top: 15px; padding: 10px; background: #fff3cd; border-radius: 6px; border-left: 4px solid #ffc107; display: none;">
                 <strong>⚠️ 本地檔案限制：</strong> 由於瀏覽器安全限制 (file://)，無法直接讀取 config.json。<br>
@@ -1005,6 +1010,8 @@
                 if (savedConfig) {
                     config = JSON.parse(savedConfig);
                     console.log('✅ Loaded configuration from localStorage (preferred)');
+                    try { localStorage.setItem('fortuneWheelLastSaved', String(Date.now())); } catch(_) {}
+                    updateBadges('localStorage');
                     return;
                 }
 
@@ -1013,6 +1020,7 @@
                 if (response && response.ok) {
                     config = await response.json();
                     console.log('✅ Loaded configuration from config.json');
+                    updateBadges('config.json');
                 } else {
                     throw new Error('Config file not found or blocked');
                 }
@@ -1024,6 +1032,8 @@
                 if (savedConfig2) {
                     config = JSON.parse(savedConfig2);
                     console.log('✅ Loaded configuration from localStorage');
+                    try { localStorage.setItem('fortuneWheelLastSaved', String(Date.now())); } catch(_) {}
+                    updateBadges('localStorage');
                 } else {
                     config = {
                         currentLanguage: "en",
@@ -1050,6 +1060,7 @@
                         character: { imagePath: "Cat.png", enabled: true }
                     };
                     console.log('✅ Created default bilingual configuration');
+                    updateBadges('default');
                 }
             }
 
@@ -1077,6 +1088,9 @@
             // Populate wheel segments with popular options (unified view)
             populateSegments('unified');
             updateAllCounters();
+
+            // Initialize badges once UI is populated
+            updateBadges();
         }
 
         // Populate form fields for a specific language
@@ -1833,6 +1847,8 @@
                 // Lightweight auto-save; if it fails, skip compression to avoid lag, but show a tip
                 try {
                     localStorage.setItem('fortuneWheelConfig', JSON.stringify(config));
+                    localStorage.setItem('fortuneWheelLastSaved', String(Date.now()));
+                    updateBadges('localStorage');
                 } catch (e) {
                     console.warn('⚠️ Auto-save quota exceeded; will compress on manual Save.');
                 }
@@ -1855,6 +1871,48 @@
                 window.hasUnsavedChanges = true;
             } catch (error) {
                 console.error('❌ Error auto-saving to localStorage:', error);
+            }
+        }
+
+        // Force save button handler
+        function forceSave() {
+            try {
+                localStorage.setItem('fortuneWheelConfig', JSON.stringify(config));
+                localStorage.setItem('fortuneWheelLastSaved', String(Date.now()));
+                updateBadges('localStorage');
+                showSuccess('✅ 已強制保存到瀏覽器 localStorage');
+            } catch (e) {
+                showError('❌ 強制保存失敗：' + (e?.message || e));
+            }
+        }
+
+        // Update badges for data source and last saved
+        function updateBadges(source) {
+            const ds = document.getElementById('dataSourceBadge');
+            const ls = document.getElementById('lastSavedBadge');
+            if (!ds || !ls) return;
+
+            // Data source
+            let text = '來源：—';
+            if (source) {
+                text = source === 'localStorage' ? '來源：LocalStorage' : source === 'config.json' ? '來源：config.json' : '來源：預設值';
+            } else {
+                // Infer if not provided
+                const hasLS = !!localStorage.getItem('fortuneWheelConfig');
+                text = hasLS ? '來源：LocalStorage' : '來源：config.json/預設值';
+            }
+            ds.textContent = text;
+
+            // Last saved
+            const ts = parseInt(localStorage.getItem('fortuneWheelLastSaved') || '0', 10);
+            if (ts > 0) {
+                const d = new Date(ts);
+                const hh = String(d.getHours()).padStart(2, '0');
+                const mm = String(d.getMinutes()).padStart(2, '0');
+                const ss = String(d.getSeconds()).padStart(2, '0');
+                ls.textContent = `最後保存：${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()} ${hh}:${mm}:${ss}`;
+            } else {
+                ls.textContent = '最後保存：—';
             }
         }
 
