@@ -1,6 +1,6 @@
 User-agent: *
 Allow: /
-Sitemap: /sitemap.xml
+Sitemap: https://whattoeathk.com/sitemap.xml
 
 
 
