@@ -5,7 +5,7 @@ class SimpleConfigLoader {
     constructor() {
         this.config = null;
         this.defaultConfig = {
-            currentLanguage: "en",
+            currentLanguage: "zh_hk",
             languages: {
                 en: {
                     header: {
