@@ -624,6 +624,8 @@
             </div>
             <button class="btn btn-primary" onclick="saveChanges()" style="margin-right: 10px;">💾 儲存變更 (自動保存)</button>
             <button class="btn" onclick="forceSave()" style="margin-right: 10px; background:#6c5ce7; color:#fff;">🧷 強制保存到瀏覽器</button>
+            <button class="btn" onclick="loadFromServer()" style="margin-right: 10px; background:#0984e3; color:#fff;">☁️ 從伺服器載入</button>
+            <button class="btn" onclick="saveToServer()" style="margin-right: 10px; background:#00b894; color:#fff;">☁️ 保存到伺服器</button>
             <button class="btn btn-success" onclick="exportCurrentConfig()" style="margin-right: 10px;">📥 下載當前設定</button>
             <button class="btn btn-warning" onclick="clearStorageAndReload()">🔄 重新載入config.json</button>
             <button class="btn" onclick="document.getElementById('importConfigInput').click()" style="margin-left: 10px; background: #17a2b8;">📤 匯入設定 (從 config.json)</button>
@@ -1091,6 +1093,48 @@
 
             // Initialize badges once UI is populated
             updateBadges();
+        }
+
+        // ---- Server persistence helpers ----
+        async function loadFromServer() {
+            try {
+                const res = await fetch('/.netlify/functions/get-config', { headers: { 'Cache-Control': 'no-store' } });
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const json = await res.json();
+                if (!json || !json.languages) throw new Error('Invalid config JSON');
+                localStorage.setItem('fortuneWheelConfig', JSON.stringify(json));
+                localStorage.setItem('fortuneWheelLastSaved', String(Date.now()));
+                config = json;
+                populateFormFields('en');
+                populateFormFields('zh_hk');
+                populateSegments('unified');
+                updateAllCounters();
+                updateBadges('server');
+                showSuccess('☁️ 已從伺服器載入最新設定');
+            } catch (e) {
+                showError('❌ 從伺服器載入失敗：' + (e?.message || e));
+            }
+        }
+
+        async function saveToServer() {
+            try {
+                const token = prompt('請輸入管理密鑰 (NETLIFY_SAVE_TOKEN)：');
+                if (!token) return;
+                const payload = JSON.parse(localStorage.getItem('fortuneWheelConfig') || 'null') || config;
+                const res = await fetch('/.netlify/functions/save-config', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-admin-token': token
+                    },
+                    body: JSON.stringify(payload)
+                });
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                showSuccess('☁️ 已保存到伺服器');
+                updateBadges('server');
+            } catch (e) {
+                showError('❌ 保存到伺服器失敗：' + (e?.message || e));
+            }
         }
 
         // Populate form fields for a specific language
