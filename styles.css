@@ -1051,7 +1051,7 @@ html, body {
 @media (max-width: 768px) and (orientation: portrait) {
     .character-container {
         left: -50px; /* moved further left per request */
-        bottom: 10px;
+        bottom: 0px; /* lowered by 10px */
         top: auto;
         right: auto;
         transform: none;
