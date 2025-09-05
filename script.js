@@ -4077,22 +4077,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    // PWA-like features (register SW only if it exists)
-    if ('serviceWorker' in navigator) {
-        try {
-            fetch('sw.js', { method: 'HEAD' }).then((res) => {
-                if (res && res.ok) {
-                    navigator.serviceWorker.register('sw.js').catch(() => {
-                        // Service worker registration failed, but app still works
-                    });
-                }
-            }).catch(() => {
-                // No sw.js found; skip registration
-            });
-        } catch (_) {
-            // Ignore
-        }
-    }
+    // PWA service worker registration removed (no sw.js deployed)
     
     // Add app to home screen prompt
     let deferredPrompt;
