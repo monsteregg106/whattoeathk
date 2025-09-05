@@ -4103,9 +4103,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const shareHomeBtn = document.getElementById('resetWheel');
     if (shareHomeBtn) {
         shareHomeBtn.addEventListener('click', async () => {
-            const url = 'https://whattoeathk.com/';
-            const zh = "今日食乜好? 為食貓幫你解決選擇困難，隨機選擇菜式仲會推薦附近餐廳!\n快啲到 https://whattoeathk.com/ 玩下啦!";
-            const en = "What to eat today? Let 'Foodie Cat' solve your indecisiveness! Get a random cuisine suggestion and even recommendations for nearby restaurants!\n\nHead over to https://whattoeathk.com/ to try it out now!";
+            const url = 'https://wttoeathk.com/';
+            const zh = "今日食乜好? 為食貓幫你解決選擇困難，隨機選擇菜式仲會推薦附近餐廳!\n快啲到 https://wttoeathk.com/ 玩下啦!";
+            const en = "What to eat today? Let 'Foodie Cat' solve your indecisiveness! Get a random cuisine suggestion and even recommendations for nearby restaurants!\n\nHead over to https://wttoeathk.com/ to try it out now!";
             const currentLang = (window.appConfig?.currentLanguage) || 'en';
             const text = currentLang === 'zh_hk' ? zh : en;
 
