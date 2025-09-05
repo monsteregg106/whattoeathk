@@ -118,7 +118,7 @@
                     <!-- Brand Character positioned relative to wheel -->
                     <div class="character-container">
                         <div class="character-wrapper">
-                            <img src="Cat.png" alt="Fortune Teller Cat" class="character-image">
+                            <img src="Cat.png" alt="Fortune Teller Cat" class="character-image" decoding="async" loading="eager">
                             <!-- Magic Stars Effect -->
                             <div class="magic-stars">
                                 <div class="star star-1">✨</div>
@@ -156,7 +156,7 @@
                     <div class="result-cuisine">
                         <div class="result-cuisine-display">
                             <div class="chef-cat-character">
-                                <img src="Cat love.png" alt="Chef Cat Love" class="chef-cat-image">
+                                <img src="Cat love.png" alt="Chef Cat Love" class="chef-cat-image" decoding="async" loading="lazy">
                             </div>
                             <div id="resultIcon" class="cuisine-icon" style="font-size: 180px !important; width: 180px !important; height: 180px !important; min-width: 180px !important; min-height: 180px !important; max-width: 180px !important; max-height: 180px !important; display: flex !important; align-items: center !important; justify-content: center !important;">🍕</div>
                         </div>
@@ -193,7 +193,7 @@
         </footer>
 
         <!-- SEO supportive content (visually hidden) -->
-        <div class="seo-content" style="position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden;">
+        <div class="seo-content" style="position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden; content-visibility:auto; contain-intrinsic-size:1px 1px;">
             <section>
                 <h1 style="font-size: 1.25rem; margin: 0 0 8px;">為食貓們！今晚食咩好？</h1>
                 <p>呢個美食輪盤 Web App 專為香港用戶設計，幫你解決「今晚食乜好」同選擇困難症，隨機抽出菜系，並可分享結果卡。</p>
@@ -219,7 +219,6 @@
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
       // Bootstrap: fetch server config before app script loads
       (function(){
@@ -232,6 +231,6 @@
         }
       })();
     </script>
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
 </body>
 </html>

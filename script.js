@@ -3815,14 +3815,14 @@ class FortuneWheel {
         
         this.canvas.addEventListener('touchstart', (e) => {
             touchStartY = e.changedTouches[0].screenY;
-        });
+        }, { passive: true });
         
         this.canvas.addEventListener('touchend', (e) => {
             touchEndY = e.changedTouches[0].screenY;
             if (Math.abs(touchStartY - touchEndY) < 50 && !this.isSpinning) {
                 this.spin();
             }
-        });
+        }, { passive: true });
     }
 }
 
