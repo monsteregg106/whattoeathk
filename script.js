@@ -689,7 +689,7 @@ class FortuneWheel {
         // Add it to the page
         document.body.appendChild(sharePopup);
         
-        console.log('✅ Share popup with buttons created successfully');
+        // share popup created
             
         } catch (error) {
             console.error('❌ Error creating share image:', error);
@@ -951,7 +951,7 @@ class FortuneWheel {
     
     // Download the share card
     downloadShareCard(sharePopup) {
-        console.log('📥 Downloading share card...');
+        // download share card
         
         // Try multiple methods to capture the popup as an image
         this.capturePopupAsImage(sharePopup, 'download');
@@ -959,7 +959,7 @@ class FortuneWheel {
     
     // Share the share card
     shareShareCard(sharePopup) {
-        console.log('📤 Sharing share card...');
+        // sharing share card
         
         // Try multiple methods to capture the popup as an image
         this.capturePopupAsImage(sharePopup, 'share');
@@ -967,7 +967,7 @@ class FortuneWheel {
     
     // Capture popup as image using multiple methods
     capturePopupAsImage(sharePopup, action) {
-        console.log(`🖼️ Capturing popup as image for ${action}...`);
+        // capturing popup as image
         
         // Prefer SVG on desktop; force robust canvas on mobile (iOS/Android)
         const ua = navigator.userAgent || '';
@@ -983,7 +983,7 @@ class FortuneWheel {
     
     // NEW APPROACH: SVG Generation
     createSVGImage(action) {
-        console.log('🎨 Creating SVG image...');
+        // creating SVG image
         
         // Check if Cat Love image is available
         this.checkCatLoveImageAvailability();
@@ -4103,50 +4103,7 @@ document.addEventListener('DOMContentLoaded', () => {
         trackEvent('Find Restaurants');
     });
     
-    // Add some fun Easter eggs
-    let konamiCode = [];
-    const konamiSequence = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65]; // Up, Up, Down, Down, Left, Right, Left, Right, B, A
-    
-    document.addEventListener('keydown', (e) => {
-        konamiCode.push(e.keyCode);
-        konamiCode = konamiCode.slice(-konamiSequence.length);
-        
-        if (konamiCode.join(',') === konamiSequence.join(',')) {
-            // Konami code activated - show in console instead of DOM
-            console.log("🎉 Konami code activated! You've unlocked the secret of the mystical food oracle!");
-            
-            // Could add special effects here
-            // For now, just show a console message
-            const specialMessage = "🎉 Konami code activated! You've unlocked the secret of the mystical food oracle!";
-            console.log(specialMessage);
-            
-            // Optional: Show a temporary notification on the page
-            const notification = document.createElement('div');
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                left: 50%;
-                transform: translateX(-50%);
-                background: linear-gradient(135deg, #667eea, #764ba2);
-                color: white;
-                padding: 15px 25px;
-                border-radius: 25px;
-                font-weight: bold;
-                z-index: 10000;
-                box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-                animation: slideDown 0.5s ease-out;
-            `;
-            notification.textContent = specialMessage;
-            document.body.appendChild(notification);
-            
-            // Remove notification after 3 seconds
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.parentNode.removeChild(notification);
-                }
-            }, 3000);
-        }
-    });
+    // Easter egg removed in production build
     
     console.log('🍽️ Fortune Food Finder loaded successfully!');
     console.log('💡 Tip: Press spacebar to spin the wheel, ESC to close popups');
