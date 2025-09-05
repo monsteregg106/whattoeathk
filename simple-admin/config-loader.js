@@ -105,6 +105,17 @@ class SimpleConfigLoader {
 
     async loadConfig() {
         try {
+            // Respect user preference if set; otherwise default to Chinese for first-time users
+            let preferred = null;
+            try { preferred = localStorage.getItem('preferredLanguage'); } catch(_) {}
+
+            if (preferred && (preferred === 'en' || preferred === 'zh_hk')) {
+                // keep as-is after loading actual config below
+            } else {
+                // set Chinese as initial preference before loading
+                try { localStorage.setItem('preferredLanguage', 'zh_hk'); } catch(_) {}
+            }
+
             // Prefer server (most up-to-date across devices)
             try {
                 const res = await fetch('/.netlify/functions/get-config', { headers: { 'Cache-Control': 'no-store' } });
@@ -113,6 +124,11 @@ class SimpleConfigLoader {
                     if (json && json.languages) {
                         this.config = json;
                         try { localStorage.setItem('fortuneWheelConfig', JSON.stringify(json)); } catch (_) {}
+                        // apply first-time preference
+                        try {
+                            const pref = localStorage.getItem('preferredLanguage');
+                            if (pref) this.config.currentLanguage = pref;
+                        } catch(_) {}
                         console.log('✅ Using configuration from server');
                         return this.config;
                     }
@@ -128,6 +144,11 @@ class SimpleConfigLoader {
                     const parsedSaved = JSON.parse(savedConfig);
                     if (parsedSaved.languages) {
                         this.config = parsedSaved;
+                        // apply first-time preference
+                        try {
+                            const pref = localStorage.getItem('preferredLanguage');
+                            if (pref) this.config.currentLanguage = pref;
+                        } catch(_) {}
                         console.log('✅ Using configuration from localStorage');
                         return this.config;
                     }
@@ -451,6 +472,8 @@ class SimpleConfigLoader {
         
         // Save to localStorage
         localStorage.setItem('fortuneWheelConfig', JSON.stringify(this.config));
+        // Persist user preference so first-time logic won't override on next visits
+        try { localStorage.setItem('preferredLanguage', newLang); } catch(_) {}
         
         // Update the UI
         this.applyConfigToApp();
