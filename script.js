@@ -78,6 +78,12 @@ class FortuneWheel {
         
         // Don't initialize immediately - wait for config
         this.initialized = false;
+        this.hasDrawnOnce = false;
+
+        // Avoid initial canvas flash before first draw
+        if (this.canvas) {
+            this.canvas.style.visibility = 'hidden';
+        }
     }
     
     init() {
@@ -316,6 +322,14 @@ class FortuneWheel {
         this.ctx.strokeStyle = '#dddddd';
         this.ctx.lineWidth = 1;
         this.ctx.stroke();
+
+        // Reveal canvas after first successful draw to prevent blink
+        if (!this.hasDrawnOnce) {
+            this.hasDrawnOnce = true;
+            if (this.canvas) {
+                this.canvas.style.visibility = 'visible';
+            }
+        }
     }
     
     spin() {
