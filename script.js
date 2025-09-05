@@ -4077,11 +4077,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    // PWA-like features
+    // PWA-like features (register SW only if it exists)
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/sw.js').catch(() => {
-            // Service worker registration failed, but app still works
-        });
+        try {
+            fetch('sw.js', { method: 'HEAD' }).then((res) => {
+                if (res && res.ok) {
+                    navigator.serviceWorker.register('sw.js').catch(() => {
+                        // Service worker registration failed, but app still works
+                    });
+                }
+            }).catch(() => {
+                // No sw.js found; skip registration
+            });
+        } catch (_) {
+            // Ignore
+        }
     }
     
     // Add app to home screen prompt
