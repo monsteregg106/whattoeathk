@@ -220,7 +220,18 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+      // Bootstrap: fetch server config before app script loads
+      (function(){
+        try {
+          window.appConfigPromise = fetch('/.netlify/functions/get-config', { headers: { 'Cache-Control': 'no-store' } })
+            .then(r => r.ok ? r.json() : null)
+            .catch(() => null);
+        } catch(_) {
+          window.appConfigPromise = Promise.resolve(null);
+        }
+      })();
+    </script>
     <script src="script.js"></script>
-    <script src="simple-admin/config-loader.js"></script>
 </body>
 </html>

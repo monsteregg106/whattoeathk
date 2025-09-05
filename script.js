@@ -3957,126 +3957,107 @@ class CharacterInteractions {
 // Initialize app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🚀 FortuneWheel initializing...');
-    
+
     // Initialize fortune wheel (but don't draw yet)
     const fortuneWheel = new FortuneWheel();
-    
-    // Make it globally accessible for config loader
     window.fortuneWheel = fortuneWheel;
-    
+
     // Initialize character interactions
     const characterInteractions = new CharacterInteractions();
-    
-    // Function to show the app
-    const showAppWhenReady = () => {
-        console.log('🎯 showAppWhenReady called');
-        // Initialize the wheel now that config is loaded
-        fortuneWheel.init();
-        
-        // Hide loading overlay and show app
-        const loadingOverlay = document.getElementById('loadingOverlay');
-        const appContainer = document.querySelector('.app-container');
-        
-        if (loadingOverlay && appContainer) {
-            loadingOverlay.classList.add('hidden');
-            appContainer.classList.add('loaded');
-            console.log('✅ Loading overlay hidden, app container shown');
-        } else {
-            console.warn('⚠️ Loading overlay or app container not found');
+
+    // Apply configuration loaded from server/local
+    const applyConfigToApp = (cfg) => {
+        if (!cfg || !cfg.languages) return;
+        window.appConfig = cfg;
+        const currentLang = cfg.currentLanguage || 'en';
+        const langData = cfg.languages[currentLang] || cfg.languages.en || {};
+
+        // Header
+        const titleEl = document.querySelector('.app-title');
+        const subtitleEl = document.querySelector('.app-subtitle');
+        if (titleEl && langData.header?.title) titleEl.textContent = langData.header.title;
+        if (subtitleEl && langData.header?.subtitle) subtitleEl.textContent = langData.header.subtitle;
+
+        // Buttons
+        const spinText = document.querySelector('.spin-text');
+        const luckyBtn = document.getElementById('feelingLucky');
+        const resetBtn = document.getElementById('resetWheel');
+        const shareBtn = document.getElementById('shareResult');
+        if (spinText && langData.buttons?.spinButton) spinText.textContent = langData.buttons.spinButton;
+        if (luckyBtn && langData.buttons?.feelingLucky) luckyBtn.textContent = langData.buttons.feelingLucky;
+        if (resetBtn && langData.buttons?.resetWheel) resetBtn.textContent = langData.buttons.resetWheel;
+        if (shareBtn && langData.buttons?.shareResult) shareBtn.textContent = langData.buttons.shareResult;
+
+        // Popup labels
+        const popupTitle = document.querySelector('.popup-header h2');
+        const findBtn = document.getElementById('findRestaurants');
+        const spinAgainBtn = document.getElementById('spinAgain');
+        if (popupTitle && langData.popup?.title) popupTitle.textContent = langData.popup.title;
+        if (findBtn && langData.popup?.findRestaurants) findBtn.textContent = langData.popup.findRestaurants;
+        if (spinAgainBtn && langData.popup?.spinAgain) spinAgainBtn.textContent = langData.popup.spinAgain;
+
+        // Wheel segments → cuisines
+        const segments = Array.isArray(langData.wheelSegments) ? langData.wheelSegments : [];
+        const cuisines = segments.map(s => ({
+            name: s.name,
+            icon: s.icon,
+            color: s.color,
+            description: s.description,
+            imageUrl: s.imageUrl,
+            popularOptions: s.popularOptions
+        }));
+        window.fortuneWheel.cuisines = cuisines.length > 0 ? cuisines : window.fortuneWheel.cuisines;
+        if (cuisines.length > 0) {
+            window.fortuneWheel.segments = cuisines.length;
+            window.fortuneWheel.segmentAngle = (Math.PI * 2) / cuisines.length;
         }
-        
-        console.log('🎉 App is now ready and visible!');
-    };
-    
-    // Function to show app with fallback timing
-    const showAppWithFallback = () => {
-        console.log('⏰ Fallback timer triggered');
-        // Wait a bit more for config loader to be ready
-        setTimeout(() => {
-            if (window.configLoader && window.configLoader.isReady) {
-                console.log('✅ Config loader ready in fallback, showing app');
-                showAppWhenReady();
-            } else {
-                // If still not ready, show app anyway
-                console.log('⚠️ Config loader not ready in fallback, showing app with defaults');
-                showAppWhenReady();
-            }
-        }, 500);
-    };
-    
-    // Function to show manual load button
-    const showManualLoadButton = () => {
-        const manualBtn = document.getElementById('manualLoadBtn');
-        if (manualBtn) {
-            manualBtn.style.display = 'block';
-            manualBtn.addEventListener('click', () => {
-                console.log('🔄 Manual load triggered');
-                showAppWhenReady();
-            });
-        }
-    };
-    
-    // Function to wait for config loader
-    const waitForConfigLoader = () => {
-        return new Promise((resolve) => {
-            const checkConfigLoader = () => {
-                if (window.configLoader) {
-                    console.log('✅ Config loader found, resolving promise');
-                    resolve(window.configLoader);
-                } else {
-                    console.log('⏳ Config loader not found, checking again in 100ms...');
-                    setTimeout(checkConfigLoader, 100);
-                }
-            };
-            checkConfigLoader();
-        });
-    };
-    
-    // Main initialization logic
-    const initializeApp = async () => {
-        try {
-            console.log('🔄 Starting app initialization...');
-            
-            // Wait for config loader to be available
-            const configLoader = await waitForConfigLoader();
-            console.log('📋 Config loader available:', configLoader);
-            
-            // Check if config is already ready
-            if (configLoader.isReady) {
-                console.log('✅ Config already ready, showing app immediately');
-                showAppWhenReady();
-            } else {
-                console.log('⏳ Config not ready, waiting for onReady callback...');
-                // Wait for config to be ready
-                configLoader.onReady(() => {
-                    console.log('🎉 Config ready callback received!');
-                    showAppWhenReady();
-                });
-                
-                // Set fallback timeout
-                setTimeout(showAppWithFallback, 3000);
-                // Show manual button after 5 seconds
-                setTimeout(showManualLoadButton, 5000);
-            }
-            
-        } catch (error) {
-            console.error('❌ Error during app initialization:', error);
-            // Fallback: show app anyway
-            setTimeout(showAppWhenReady, 1000);
-        }
-    };
-    
-    // Start initialization
-    initializeApp();
-    
-    // Add global event listener for config ready
-    window.addEventListener('configReady', () => {
-        console.log('🎉 Global config ready event received!');
+
+        // Draw/init wheel
         if (!window.fortuneWheel.initialized) {
-            showAppWhenReady();
+            window.fortuneWheel.init();
+        } else if (window.fortuneWheel.drawWheel) {
+            window.fortuneWheel.drawWheel();
         }
-    });
-    
+
+        // Language toggle
+        const langToggle = document.getElementById('langToggle');
+        if (langToggle) {
+            langToggle.textContent = (currentLang === 'en') ? '中文' : 'English';
+            langToggle.onclick = () => {
+                const next = (window.appConfig.currentLanguage === 'en') ? 'zh_hk' : 'en';
+                window.appConfig.currentLanguage = next;
+                try { localStorage.setItem('fortuneWheelConfig', JSON.stringify(window.appConfig)); } catch(_) {}
+                applyConfigToApp(window.appConfig);
+            };
+        }
+    };
+
+    // Load config from server bootstrap, then apply
+    (async () => {
+        try {
+            const serverCfg = await (window.appConfigPromise || Promise.resolve(null));
+            if (serverCfg && serverCfg.languages) {
+                console.log('✅ Using configuration from server (bootstrap)');
+                applyConfigToApp(serverCfg);
+            } else {
+                // Fallbacks: localStorage → defaults in constructor
+                let lsCfg = null;
+                try { lsCfg = JSON.parse(localStorage.getItem('fortuneWheelConfig') || 'null'); } catch(_) {}
+                if (lsCfg && lsCfg.languages) {
+                    console.log('✅ Using configuration from localStorage (fallback)');
+                    applyConfigToApp(lsCfg);
+                } else {
+                    console.log('ℹ️ No server/local config, using built-in defaults');
+                    // Initialize with built-ins
+                    window.fortuneWheel.init();
+                }
+            }
+        } catch (e) {
+            console.warn('⚠️ Config bootstrap failed, using defaults', e);
+            window.fortuneWheel.init();
+        }
+    })();
+
     // PWA service worker registration removed (no sw.js deployed)
     
     // Add app to home screen prompt
