@@ -3962,8 +3962,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const fortuneWheel = new FortuneWheel();
     window.fortuneWheel = fortuneWheel;
 
-    // Initialize character interactions
-    const characterInteractions = new CharacterInteractions();
+    // Initialize character interactions (deferred to idle)
+    const initCharacter = () => { try { new CharacterInteractions(); } catch(_) {} };
+    if (window.requestIdleCallback) {
+        requestIdleCallback(initCharacter, { timeout: 1000 });
+    } else {
+        setTimeout(initCharacter, 0);
+    }
 
     // Apply configuration loaded from server/local
     const applyConfigToApp = (cfg) => {
