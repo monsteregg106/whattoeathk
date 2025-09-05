@@ -3996,6 +3996,22 @@ document.addEventListener('DOMContentLoaded', () => {
         if (findBtn && langData.popup?.findRestaurants) findBtn.textContent = langData.popup.findRestaurants;
         if (spinAgainBtn && langData.popup?.spinAgain) spinAgainBtn.textContent = langData.popup.spinAgain;
 
+        // Character image from config (supports data URLs and paths)
+        try {
+            const characterImg = document.querySelector('.character-image');
+            if (characterImg) {
+                if (cfg.character && cfg.character.enabled === false) {
+                    characterImg.style.display = 'none';
+                } else {
+                    characterImg.style.display = '';
+                    const imgPath = cfg.character?.imagePath;
+                    if (typeof imgPath === 'string' && imgPath.length > 0) {
+                        characterImg.src = imgPath;
+                    }
+                }
+            }
+        } catch (_) {}
+
         // Wheel segments → cuisines
         const segments = Array.isArray(langData.wheelSegments) ? langData.wheelSegments : [];
         const cuisines = segments.map(s => ({
