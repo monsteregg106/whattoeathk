@@ -1,0 +1,10 @@
+{
+  "name": "wttoeathk-site",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@netlify/blobs": "^5.0.0"
+  }
+}
+
+
