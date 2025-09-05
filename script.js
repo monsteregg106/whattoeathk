@@ -4006,6 +4006,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     characterImg.style.display = '';
                     const imgPath = cfg.character?.imagePath;
                     if (typeof imgPath === 'string' && imgPath.length > 0) {
+                        // Avoid flash of default: reveal only after the configured image is loaded
+                        characterImg.style.visibility = 'hidden';
+                        const reveal = () => { characterImg.style.visibility = 'visible'; };
+                        characterImg.onload = reveal;
+                        characterImg.onerror = reveal;
                         characterImg.src = imgPath;
                     }
                 }
