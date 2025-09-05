@@ -485,7 +485,7 @@ class FortuneWheel {
         document.getElementById('resultDescription').textContent = cuisine.description;
         
         // Select Cat Love image per spin from available images (config/localStorage)
-        const chefCatImgEl = document.querySelector('.chef-cat-image');
+        const chefCatImgEl = document.querySelector('#resultPopup .chef-cat-image');
         this.currentCatLoveDataUrl = null;
         try {
             const availableCats = this.getAvailableCatLoveImages();
@@ -781,7 +781,7 @@ class FortuneWheel {
         if (!catImageSrc) {
             // Fallbacks (legacy paths)
             try {
-                const existingCat = document.querySelector('.chef-cat-image');
+                const existingCat = document.querySelector('#resultPopup .chef-cat-image');
                 if (existingCat && existingCat.getAttribute('src')) {
                     catImageSrc = existingCat.getAttribute('src');
                 }

@@ -405,7 +405,8 @@ class SimpleConfigLoader {
     // Update Cat Love image inside the result popup (use images array; fallback to legacy imagePath)
     updateCatLoveImage() {
         try {
-            const catImgEl = document.querySelector('.chef-cat-image');
+            // Scope to result popup image only, avoid share popup images
+            const catImgEl = document.querySelector('#resultPopup .chef-cat-image');
             if (!catImgEl) return;
 
             let src = null;
