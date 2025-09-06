@@ -3964,14 +3964,11 @@ document.addEventListener('DOMContentLoaded', () => {
         window.appConfig.currentLanguage = currentLang;
         const langData = cfg.languages[currentLang] || cfg.languages.en || {};
 
-        // Header
+        // Header (always use site defaults, ignore admin config)
         const titleEl = document.querySelector('.app-title');
         const subtitleEl = document.querySelector('.app-subtitle');
-        if (titleEl && langData.header?.title) titleEl.textContent = langData.header.title;
-        if (subtitleEl && langData.header?.subtitle) subtitleEl.textContent = langData.header.subtitle;
-        // Fallbacks when config missing
-        if (titleEl && !langData.header?.title) titleEl.textContent = (currentLang === 'zh_hk') ? '為食貓轉轉盤' : 'Foodie Cat’s Wheel';
-        if (subtitleEl && !langData.header?.subtitle) subtitleEl.textContent = (currentLang === 'zh_hk') ? '食咩好？交俾為食貓幫你決定啦！' : 'Can’t decide what to eat? Let Foodie Cat spin for you!';
+        if (titleEl) titleEl.textContent = (currentLang === 'zh_hk') ? '為食貓轉轉盤' : 'Foodie Cat’s Wheel';
+        if (subtitleEl) subtitleEl.textContent = (currentLang === 'zh_hk') ? '食咩好？交俾為食貓幫你決定啦！' : 'Can’t decide what to eat? Let Foodie Cat spin for you!';
 
         // Buttons
         const spinText = document.querySelector('.spin-text');
@@ -3979,7 +3976,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const resetBtn = document.getElementById('resetWheel');
         const shareBtn = document.getElementById('shareResult');
         if (spinText && langData.buttons?.spinButton) spinText.textContent = langData.buttons.spinButton;
-        if (luckyBtn && langData.buttons?.feelingLucky) luckyBtn.textContent = langData.buttons.feelingLucky;
+        // Bookmark button label: always use defaults (ignore admin config)
+        if (luckyBtn) luckyBtn.textContent = (currentLang === 'zh_hk') ? '收藏為食貓' : 'Bookmark Foodie Cat';
         if (resetBtn) {
             // Replace Reset with Share action
             resetBtn.textContent = (currentLang === 'en') ? '🤝 Share Foodie Cat to friends' : '🤝 分享為食貓俾朋友';
