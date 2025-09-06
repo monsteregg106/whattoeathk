@@ -3958,11 +3958,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Prefer user-stored language; default to zh_hk when not set
         let storedPref = null;
         try { storedPref = localStorage.getItem('preferredLanguage'); } catch(_) {}
-        const currentLang = (storedPref === 'en' || storedPref === 'zh_hk')
-            ? storedPref
-            : (cfg.currentLanguage || 'zh_hk');
+        const currentLang = (storedPref === 'en' || storedPref === 'zh_hk') ? storedPref : 'zh_hk';
         window.appConfig.currentLanguage = currentLang;
-        const langData = cfg.languages[currentLang] || cfg.languages.en || {};
+        const langData = cfg.languages[currentLang] || cfg.languages.zh_hk || cfg.languages.en || {};
 
         // Header (always use site defaults, ignore admin config)
         const titleEl = document.querySelector('.app-title');
