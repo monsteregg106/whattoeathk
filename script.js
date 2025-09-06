@@ -1743,18 +1743,23 @@ class FortuneWheel {
         const cuisineDescription = document.getElementById('resultDescription').textContent;
         const resultIconElement = document.getElementById('resultIcon');
         
-        // Get popup title from config
+        // Get popup title from app config; fallback to DOM
         let popupTitle = '🍽️ What to Eat Tonight?';
         try {
-            if (window.configLoader && window.configLoader.config) {
-                const currentLang = window.configLoader.config.currentLanguage || 'en';
-                const langConfig = window.configLoader.config.languages[currentLang];
+            const cfg = window.appConfig;
+            if (cfg && cfg.languages) {
+                const currentLang = (cfg.currentLanguage === 'zh_hk' || cfg.currentLanguage === 'en') ? cfg.currentLanguage : 'zh_hk';
+                const langConfig = cfg.languages[currentLang];
                 if (langConfig && langConfig.popup && langConfig.popup.title) {
                     popupTitle = langConfig.popup.title;
                 }
             }
-        } catch (e) {
-            console.log('⚠️ Could not get popup title from config, using default');
+        } catch (_) {}
+        if (!popupTitle || popupTitle === '🍽️ What to Eat Tonight?') {
+            const domTitle = document.querySelector('.popup-header h2');
+            if (domTitle && domTitle.textContent && domTitle.textContent.trim().length > 0) {
+                popupTitle = domTitle.textContent.trim();
+            }
         }
         
         // Get popular options
@@ -1804,7 +1809,7 @@ class FortuneWheel {
         ctx.fillStyle = '#333333';
         
         // Draw title
-        ctx.font = 'bold 20px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif';
+        ctx.font = 'bold 20px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
         ctx.fillText(popupTitle, canvas.width / 2, 50);
         
         // Load and draw images
