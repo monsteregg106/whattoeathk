@@ -1209,9 +1209,9 @@ class FortuneWheel {
         const cfg = window.appConfig;
         try {
             if (cfg?.catLove?.imagePath || (Array.isArray(cfg?.catLove?.images) && cfg.catLove.images.some(x => !!x))) {
-                hasUploadedImage = true;
-            }
-            if (!hasUploadedImage) {
+            hasUploadedImage = true;
+        }
+        if (!hasUploadedImage) {
                 const storedConfig = localStorage.getItem('fortuneWheelConfig');
                 if (storedConfig) {
                     const parsed = JSON.parse(storedConfig);
@@ -1239,9 +1239,9 @@ class FortuneWheel {
                         const config = JSON.parse(storedConfig);
                         if (config?.catLove?.imagePath) catLoveImage = config.catLove.imagePath;
                         if (!catLoveImage && Array.isArray(config?.catLove?.images)) catLoveImage = config.catLove.images.find(x => !!x) || null;
-                    }
+                        }
                 } catch (_) {}
-            }
+                    }
             if (catLoveImage) {
                 callback(catLoveImage);
                 return;
@@ -3919,11 +3919,11 @@ class CharacterInteractions {
 // Initialize app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🚀 FortuneWheel initializing...');
-
+    
     // Initialize fortune wheel (but don't draw yet)
     const fortuneWheel = new FortuneWheel();
     window.fortuneWheel = fortuneWheel;
-
+    
     // Initialize character interactions (deferred to idle)
     const initCharacter = () => { try { new CharacterInteractions(); } catch(_) {} };
     if (window.requestIdleCallback) {
@@ -3933,32 +3933,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Hide UI until we have a real config
-    const hideAppUntilConfig = () => {
-        try {
-            const headerContent = document.querySelector('.header-content');
-            const actions = document.querySelector('.action-buttons');
-            if (headerContent) headerContent.style.visibility = 'hidden';
-            if (actions) actions.style.visibility = 'hidden';
-            // canvas stays hidden until first draw; character is hidden until configured image loads
-        } catch (_) {}
-    };
-    const revealAppAfterConfig = () => {
-        try {
-            const headerContent = document.querySelector('.header-content');
-            const actions = document.querySelector('.action-buttons');
-            if (headerContent) headerContent.style.visibility = 'visible';
-            if (actions) actions.style.visibility = 'visible';
-        } catch (_) {}
-    };
-    const showMissingConfigNotice = () => {
-        try {
-            const notice = document.createElement('div');
-            notice.style.cssText = 'margin: 20px auto; max-width: 800px; background: #fff3cd; color: #856404; border: 1px solid #ffeeba; border-radius: 8px; padding: 16px; text-align: center;';
-            notice.textContent = 'Configuration not found. Please open the admin panel to set up content or import a config.';
-            const container = document.querySelector('.app-container') || document.body;
-            container.insertBefore(notice, container.firstChild);
-        } catch (_) {}
-    };
+    const hideAppUntilConfig = () => {};
+    const revealAppAfterConfig = () => {};
+    const showMissingConfigNotice = () => {};
 
     hideAppUntilConfig();
 
@@ -4002,7 +3979,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (characterImg) {
                 if (cfg.character && cfg.character.enabled === false) {
                     characterImg.style.display = 'none';
-                } else {
+            } else {
                     characterImg.style.display = '';
                     const imgPath = cfg.character?.imagePath;
                     if (typeof imgPath === 'string' && imgPath.length > 0) {
@@ -4040,7 +4017,7 @@ document.addEventListener('DOMContentLoaded', () => {
             window.fortuneWheel.drawWheel();
         }
 
-        // Reveal UI now that config is applied
+        // Reveal UI now that config is applied (no-op)
         revealAppAfterConfig();
 
         // Language toggle
@@ -4071,14 +4048,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.log('✅ Using configuration from localStorage (fallback)');
                     applyConfigToApp(lsCfg);
                 } else {
-                    console.log('ℹ️ No server/local config; skipping defaults and keeping UI hidden');
-                    showMissingConfigNotice();
+                    console.log('ℹ️ No server/local config, using built-in defaults');
+                    window.fortuneWheel.init();
                 }
             }
         } catch (e) {
-            console.warn('⚠️ Config bootstrap failed, using defaults', e);
-            console.log('ℹ️ Skipping defaults due to bootstrap failure');
-            showMissingConfigNotice();
+            console.warn('⚠️ Config bootstrap failed, using built-in defaults', e);
+            window.fortuneWheel.init();
         }
     })();
 
