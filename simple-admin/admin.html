@@ -1666,11 +1666,8 @@
             if (file) {
                 const reader = new FileReader();
                 reader.onload = async function(e) {
-                    // Prefer network file path over large base64
-                    config.character.imagePath = 'Cat.png';
-                    // Keep small data URL only if strictly needed (commented out)
-                    // const compressed = await compressDataUrl(e.target.result, 400, 480, 0.85);
-                    // config.character.imagePath = compressed;
+                    const compressed = await compressDataUrl(e.target.result, 400, 480, 0.85);
+                    config.character.imagePath = compressed;
                     showSuccess('Character image uploaded successfully!');
                 };
                 reader.readAsDataURL(file);
@@ -1714,13 +1711,12 @@
             if (file) {
                 const reader = new FileReader();
                 reader.onload = async function(e) {
-                    // Prefer stored file path over large data URL for segment icons
-                    const compressed = null;
+                    const compressed = await compressDataUrl(e.target.result, 256, 256, 0.88);
                     if (lang === 'unified') {
                         // Upload to both languages
                         ['en', 'zh_hk'].forEach(l => {
                             if (config.languages[l].wheelSegments && config.languages[l].wheelSegments[index]) {
-                                config.languages[l].wheelSegments[index].imageUrl = null;
+                                config.languages[l].wheelSegments[index].imageUrl = compressed;
                                 config.languages[l].wheelSegments[index].icon = '🖼️';
                             }
                         });
@@ -1728,7 +1724,7 @@
                         showSuccess(`Image uploaded for segment ${index + 1} in both languages!`);
                     } else {
                         // Legacy support for individual language
-                        config.languages[lang].wheelSegments[index].imageUrl = null;
+                        config.languages[lang].wheelSegments[index].imageUrl = compressed;
                         config.languages[lang].wheelSegments[index].icon = '🖼️';
                         populateSegments(lang);
                         showSuccess(`Image uploaded for segment ${index + 1}!`);
