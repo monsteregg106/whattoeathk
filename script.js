@@ -3906,6 +3906,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const fortuneWheel = new FortuneWheel();
     window.fortuneWheel = fortuneWheel;
     
+    // Default language preference to Chinese on first visit
+    try {
+        if (!localStorage.getItem('preferredLanguage')) {
+            localStorage.setItem('preferredLanguage', 'zh_hk');
+        }
+    } catch (_) {}
+
     // Initialize character interactions (deferred to idle)
     const initCharacter = () => { try { new CharacterInteractions(); } catch(_) {} };
     if (window.requestIdleCallback) {
@@ -3948,7 +3955,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const applyConfigToApp = (cfg) => {
         if (!cfg || !cfg.languages) return;
         window.appConfig = cfg;
-        const currentLang = cfg.currentLanguage || 'zh_hk';
+        // Prefer user-stored language; default to zh_hk when not set
+        let storedPref = null;
+        try { storedPref = localStorage.getItem('preferredLanguage'); } catch(_) {}
+        const currentLang = (storedPref === 'en' || storedPref === 'zh_hk')
+            ? storedPref
+            : (cfg.currentLanguage || 'zh_hk');
+        window.appConfig.currentLanguage = currentLang;
         const langData = cfg.languages[currentLang] || cfg.languages.en || {};
 
         // Header
@@ -4035,7 +4048,10 @@ document.addEventListener('DOMContentLoaded', () => {
             langToggle.onclick = () => {
                 const next = (window.appConfig.currentLanguage === 'en') ? 'zh_hk' : 'en';
                 window.appConfig.currentLanguage = next;
-                try { localStorage.setItem('fortuneWheelConfig', JSON.stringify(window.appConfig)); } catch(_) {}
+                try {
+                    localStorage.setItem('fortuneWheelConfig', JSON.stringify(window.appConfig));
+                    localStorage.setItem('preferredLanguage', next);
+                } catch(_) {}
                 applyConfigToApp(window.appConfig);
             };
         }
