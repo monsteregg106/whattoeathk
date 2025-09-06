@@ -3992,23 +3992,20 @@ document.addEventListener('DOMContentLoaded', () => {
         if (findBtn && langData.popup?.findRestaurants) findBtn.textContent = langData.popup.findRestaurants;
         if (spinAgainBtn && langData.popup?.spinAgain) spinAgainBtn.textContent = langData.popup.spinAgain;
 
-        // Character image from config (supports data URLs and paths)
+        // Character image (force default GIF, ignore admin override)
         try {
             const characterImg = document.querySelector('.character-image');
             if (characterImg) {
                 if (cfg.character && cfg.character.enabled === false) {
                     characterImg.style.display = 'none';
-            } else {
+                } else {
                     characterImg.style.display = '';
-                    const imgPath = cfg.character?.imagePath;
-                    if (typeof imgPath === 'string' && imgPath.length > 0) {
-                        // Avoid flash of default: reveal only after the configured image is loaded
-                        characterImg.style.visibility = 'hidden';
-                        const reveal = () => { characterImg.style.visibility = 'visible'; };
-                        characterImg.onload = reveal;
-                        characterImg.onerror = reveal;
-                        characterImg.src = imgPath;
-                    }
+                    const imgPath = 'Cat think.gif';
+                    characterImg.style.visibility = 'hidden';
+                    const reveal = () => { characterImg.style.visibility = 'visible'; };
+                    characterImg.onload = reveal;
+                    characterImg.onerror = reveal;
+                    characterImg.src = imgPath;
                 }
             }
         } catch (_) {}
