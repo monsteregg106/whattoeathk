@@ -3933,9 +3933,32 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Hide UI until we have a real config
-    const hideAppUntilConfig = () => {};
-    const revealAppAfterConfig = () => {};
-    const showMissingConfigNotice = () => {};
+    const hideAppUntilConfig = () => {
+        try {
+            const headerContent = document.querySelector('.header-content');
+            const actions = document.querySelector('.action-buttons');
+            if (headerContent) headerContent.style.visibility = 'hidden';
+            if (actions) actions.style.visibility = 'hidden';
+            // canvas stays hidden until first draw; character is hidden until configured image loads
+        } catch (_) {}
+    };
+    const revealAppAfterConfig = () => {
+        try {
+            const headerContent = document.querySelector('.header-content');
+            const actions = document.querySelector('.action-buttons');
+            if (headerContent) headerContent.style.visibility = 'visible';
+            if (actions) actions.style.visibility = 'visible';
+        } catch (_) {}
+    };
+    const showMissingConfigNotice = () => {
+        try {
+            const notice = document.createElement('div');
+            notice.style.cssText = 'margin: 20px auto; max-width: 800px; background: #fff3cd; color: #856404; border: 1px solid #ffeeba; border-radius: 8px; padding: 16px; text-align: center;';
+            notice.textContent = 'Configuration not found. Please open the admin panel to set up content or import a config.';
+            const container = document.querySelector('.app-container') || document.body;
+            container.insertBefore(notice, container.firstChild);
+        } catch (_) {}
+    };
 
     hideAppUntilConfig();
 
@@ -4017,7 +4040,7 @@ document.addEventListener('DOMContentLoaded', () => {
             window.fortuneWheel.drawWheel();
         }
 
-        // Reveal UI now that config is applied (no-op)
+        // Reveal UI now that config is applied
         revealAppAfterConfig();
 
         // Language toggle
@@ -4041,20 +4064,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log('✅ Using configuration from server (bootstrap)');
                 applyConfigToApp(serverCfg);
             } else {
-                // Fallbacks: localStorage → defaults in constructor
+                // Fallbacks: localStorage → if none, keep UI hidden and show notice
                 let lsCfg = null;
                 try { lsCfg = JSON.parse(localStorage.getItem('fortuneWheelConfig') || 'null'); } catch(_) {}
                 if (lsCfg && lsCfg.languages) {
                     console.log('✅ Using configuration from localStorage (fallback)');
                     applyConfigToApp(lsCfg);
                 } else {
-                    console.log('ℹ️ No server/local config, using built-in defaults');
-                    window.fortuneWheel.init();
+                    console.log('ℹ️ No server/local config; skipping defaults and keeping UI hidden');
+                    showMissingConfigNotice();
                 }
             }
         } catch (e) {
-            console.warn('⚠️ Config bootstrap failed, using built-in defaults', e);
-            window.fortuneWheel.init();
+            console.warn('⚠️ Config bootstrap failed', e);
+            console.log('ℹ️ Skipping defaults due to bootstrap failure');
+            showMissingConfigNotice();
         }
     })();
 
