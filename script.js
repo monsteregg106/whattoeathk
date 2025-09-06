@@ -3883,17 +3883,11 @@ class CharacterInteractions {
             return;
         }
         
-        // Random blink or subtle bounce
-        if (Math.random() < 0.3) {
-            // Trigger extra blink
-            this.triggerCatBlink();
-        } else {
-            // Subtle bounce animation
-            characterImage.style.animation = 'none';
-            setTimeout(() => {
-                characterImage.style.animation = 'characterFloat 3s ease-in-out infinite';
-            }, 50);
-        }
+        // Subtle bounce animation
+        characterImage.style.animation = 'none';
+        setTimeout(() => {
+            characterImage.style.animation = 'characterFloat 3s ease-in-out infinite';
+        }, 50);
         
         // Character messages disabled
         // if (Math.random() < 0.5) {
@@ -3901,19 +3895,7 @@ class CharacterInteractions {
         // }
     }
 
-    triggerCatBlink() {
-        const characterWrapper = document.querySelector('.character-wrapper');
-        if (!characterWrapper) {
-            console.warn('⚠️ Character wrapper not found, skipping blink animation');
-            return;
-        }
-        
-        characterWrapper.style.setProperty('--blink-trigger', '1');
-        
-        setTimeout(() => {
-            characterWrapper.style.setProperty('--blink-trigger', '0');
-        }, 200);
-    }
+    
 }
 
 // Initialize app when DOM is loaded
@@ -4133,5 +4115,4 @@ document.addEventListener('DOMContentLoaded', () => {
     
     console.log('🍽️ Fortune Food Finder loaded successfully!');
     console.log('💡 Tip: Press spacebar to spin the wheel, ESC to close popups');
-    console.log('🎮 Easter egg: Try the Konami code for a surprise!');
 });
