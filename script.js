@@ -993,19 +993,18 @@ class FortuneWheel {
         const cuisineDescription = document.getElementById('resultDescription').textContent;
         const resultIconElement = document.getElementById('resultIcon');
         
-        // Get popup title from config
+        // Get popup title from app config (respect current language)
         let popupTitle = '🍽️ What to Eat Tonight?';
         try {
-            if (window.configLoader && window.configLoader.config) {
-                const currentLang = window.configLoader.config.currentLanguage || 'en';
-                const langConfig = window.configLoader.config.languages[currentLang];
+            const cfg = window.appConfig;
+            if (cfg && cfg.languages) {
+                const currentLang = (cfg.currentLanguage === 'zh_hk' || cfg.currentLanguage === 'en') ? cfg.currentLanguage : 'zh_hk';
+                const langConfig = cfg.languages[currentLang];
                 if (langConfig && langConfig.popup && langConfig.popup.title) {
                     popupTitle = langConfig.popup.title;
                 }
             }
-        } catch (e) {
-            console.log('⚠️ Could not get popup title from config, using default');
-        }
+        } catch (_) {}
         
         // Get popular options
         const suggestionsList = document.getElementById('suggestionsList');
