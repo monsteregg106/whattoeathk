@@ -1209,9 +1209,9 @@ class FortuneWheel {
         const cfg = window.appConfig;
         try {
             if (cfg?.catLove?.imagePath || (Array.isArray(cfg?.catLove?.images) && cfg.catLove.images.some(x => !!x))) {
-                hasUploadedImage = true;
-            }
-            if (!hasUploadedImage) {
+            hasUploadedImage = true;
+        }
+        if (!hasUploadedImage) {
                 const storedConfig = localStorage.getItem('fortuneWheelConfig');
                 if (storedConfig) {
                     const parsed = JSON.parse(storedConfig);
@@ -1239,9 +1239,9 @@ class FortuneWheel {
                         const config = JSON.parse(storedConfig);
                         if (config?.catLove?.imagePath) catLoveImage = config.catLove.imagePath;
                         if (!catLoveImage && Array.isArray(config?.catLove?.images)) catLoveImage = config.catLove.images.find(x => !!x) || null;
-                    }
+                        }
                 } catch (_) {}
-            }
+                    }
             if (catLoveImage) {
                 callback(catLoveImage);
                 return;
@@ -3883,11 +3883,11 @@ class CharacterInteractions {
             return;
         }
         
-        // Subtle bounce animation
-        characterImage.style.animation = 'none';
-        setTimeout(() => {
-            characterImage.style.animation = 'characterFloat 3s ease-in-out infinite';
-        }, 50);
+            // Subtle bounce animation
+            characterImage.style.animation = 'none';
+            setTimeout(() => {
+                characterImage.style.animation = 'characterFloat 3s ease-in-out infinite';
+            }, 50);
         
         // Character messages disabled
         // if (Math.random() < 0.5) {
@@ -3901,11 +3901,11 @@ class CharacterInteractions {
 // Initialize app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🚀 FortuneWheel initializing...');
-
+    
     // Initialize fortune wheel (but don't draw yet)
     const fortuneWheel = new FortuneWheel();
     window.fortuneWheel = fortuneWheel;
-
+    
     // Initialize character interactions (deferred to idle)
     const initCharacter = () => { try { new CharacterInteractions(); } catch(_) {} };
     if (window.requestIdleCallback) {
@@ -3948,7 +3948,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const applyConfigToApp = (cfg) => {
         if (!cfg || !cfg.languages) return;
         window.appConfig = cfg;
-        const currentLang = cfg.currentLanguage || 'en';
+        const currentLang = cfg.currentLanguage || 'zh_hk';
         const langData = cfg.languages[currentLang] || cfg.languages.en || {};
 
         // Header
@@ -3987,7 +3987,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (characterImg) {
                 if (cfg.character && cfg.character.enabled === false) {
                     characterImg.style.display = 'none';
-                } else {
+            } else {
                     characterImg.style.display = '';
                     const imgPath = cfg.character?.imagePath;
                     if (typeof imgPath === 'string' && imgPath.length > 0) {
