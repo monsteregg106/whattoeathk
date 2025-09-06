@@ -993,7 +993,7 @@ class FortuneWheel {
         const cuisineDescription = document.getElementById('resultDescription').textContent;
         const resultIconElement = document.getElementById('resultIcon');
         
-        // Get popup title from app config (respect current language)
+        // Get popup title from app config; fallback to DOM for timing safety
         let popupTitle = '🍽️ What to Eat Tonight?';
         try {
             const cfg = window.appConfig;
@@ -1005,6 +1005,13 @@ class FortuneWheel {
                 }
             }
         } catch (_) {}
+        // DOM fallback if config not ready
+        if (!popupTitle || popupTitle === '🍽️ What to Eat Tonight?') {
+            const domTitle = document.querySelector('.popup-header h2');
+            if (domTitle && domTitle.textContent && domTitle.textContent.trim().length > 0) {
+                popupTitle = domTitle.textContent.trim();
+            }
+        }
         
         // Get popular options
         const suggestionsList = document.getElementById('suggestionsList');
