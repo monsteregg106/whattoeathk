@@ -3956,6 +3956,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const subtitleEl = document.querySelector('.app-subtitle');
         if (titleEl && langData.header?.title) titleEl.textContent = langData.header.title;
         if (subtitleEl && langData.header?.subtitle) subtitleEl.textContent = langData.header.subtitle;
+        // Fallbacks when config missing
+        if (titleEl && !langData.header?.title) titleEl.textContent = (currentLang === 'zh_hk') ? '為食貓轉轉盤' : 'Foodie Cat’s Wheel';
+        if (subtitleEl && !langData.header?.subtitle) subtitleEl.textContent = (currentLang === 'zh_hk') ? '食咩好？交俾為食貓幫你決定啦！' : 'Can’t decide what to eat? Let Foodie Cat spin for you!';
 
         // Buttons
         const spinText = document.querySelector('.spin-text');
