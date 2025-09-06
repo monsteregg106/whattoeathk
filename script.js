@@ -1209,9 +1209,9 @@ class FortuneWheel {
         const cfg = window.appConfig;
         try {
             if (cfg?.catLove?.imagePath || (Array.isArray(cfg?.catLove?.images) && cfg.catLove.images.some(x => !!x))) {
-            hasUploadedImage = true;
-        }
-        if (!hasUploadedImage) {
+                hasUploadedImage = true;
+            }
+            if (!hasUploadedImage) {
                 const storedConfig = localStorage.getItem('fortuneWheelConfig');
                 if (storedConfig) {
                     const parsed = JSON.parse(storedConfig);
@@ -1239,9 +1239,9 @@ class FortuneWheel {
                         const config = JSON.parse(storedConfig);
                         if (config?.catLove?.imagePath) catLoveImage = config.catLove.imagePath;
                         if (!catLoveImage && Array.isArray(config?.catLove?.images)) catLoveImage = config.catLove.images.find(x => !!x) || null;
-                        }
-                } catch (_) {}
                     }
+                } catch (_) {}
+            }
             if (catLoveImage) {
                 callback(catLoveImage);
                 return;
@@ -3919,11 +3919,11 @@ class CharacterInteractions {
 // Initialize app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🚀 FortuneWheel initializing...');
-    
+
     // Initialize fortune wheel (but don't draw yet)
     const fortuneWheel = new FortuneWheel();
     window.fortuneWheel = fortuneWheel;
-    
+
     // Initialize character interactions (deferred to idle)
     const initCharacter = () => { try { new CharacterInteractions(); } catch(_) {} };
     if (window.requestIdleCallback) {
@@ -4002,7 +4002,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (characterImg) {
                 if (cfg.character && cfg.character.enabled === false) {
                     characterImg.style.display = 'none';
-            } else {
+                } else {
                     characterImg.style.display = '';
                     const imgPath = cfg.character?.imagePath;
                     if (typeof imgPath === 'string' && imgPath.length > 0) {
@@ -4064,7 +4064,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log('✅ Using configuration from server (bootstrap)');
                 applyConfigToApp(serverCfg);
             } else {
-                // Fallbacks: localStorage → if none, keep UI hidden and show notice
+                // Fallbacks: localStorage → defaults in constructor
                 let lsCfg = null;
                 try { lsCfg = JSON.parse(localStorage.getItem('fortuneWheelConfig') || 'null'); } catch(_) {}
                 if (lsCfg && lsCfg.languages) {
@@ -4076,7 +4076,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         } catch (e) {
-            console.warn('⚠️ Config bootstrap failed', e);
+            console.warn('⚠️ Config bootstrap failed, using defaults', e);
             console.log('ℹ️ Skipping defaults due to bootstrap failure');
             showMissingConfigNotice();
         }

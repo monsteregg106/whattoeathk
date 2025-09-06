@@ -153,7 +153,6 @@ html, body {
     animation: characterFloat 3s ease-in-out infinite;
     position: relative;
     z-index: 5;
-    will-change: transform, opacity;
 }
 
 .character-wrapper::before {
@@ -218,7 +217,6 @@ html, body {
     z-index: 1;
     opacity: 0;
     transition: opacity 0.3s ease;
-    will-change: opacity, transform;
 }
 
 .magic-stars.active {
@@ -333,7 +331,6 @@ html, body {
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
     border: 1px solid rgba(226, 232, 240, 0.6);
     overflow: visible;
-    will-change: transform;
 }
 
 #wheelCanvas {
