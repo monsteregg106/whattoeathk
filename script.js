@@ -3917,7 +3917,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const initCharacter = () => { try { new CharacterInteractions(); } catch(_) {} };
     if (window.requestIdleCallback) {
         requestIdleCallback(initCharacter, { timeout: 1000 });
-    } else {
+            } else {
         setTimeout(initCharacter, 0);
     }
 
